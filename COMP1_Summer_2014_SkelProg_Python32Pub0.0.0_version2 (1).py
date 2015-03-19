@@ -3,6 +3,8 @@
 # written by the AQA Programmer Team
 # developed in the Python 3.2 programming environment
 # version 2 edited 06/03/2014
+#Nicola Batty
+#1/03/2015
 
 import random
 
