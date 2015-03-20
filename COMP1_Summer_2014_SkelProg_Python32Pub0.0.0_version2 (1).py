@@ -6,6 +6,7 @@
 #Nicola Batty
 #1/03/2015
 
+#import pdb
 import random
 
 NO_OF_RECENT_SCORES = 3
@@ -186,6 +187,7 @@ def UpdateRecentScores(RecentScores, Score):
   RecentScores[Count].Score = Score
 
 def PlayGame(Deck, RecentScores):
+  #pdb.set_trace()
   LastCard = TCard()
   NextCard = TCard()
   GameOver = False
@@ -194,13 +196,29 @@ def PlayGame(Deck, RecentScores):
   NoOfCardsTurnedOver = 1
   while (NoOfCardsTurnedOver < 52) and (not GameOver):
     GetCard(NextCard, Deck, NoOfCardsTurnedOver)
-    Choice = ''
-    while (Choice != 'y') and (Choice != 'n'):
+    Choice = ""
+    #while (Choice!= "y") and (Choice != "n"):
+    #first atempt
+    #while (Choice != "y" or "Y" or "yes" or "Yes") and (Choice != "n" or "N" or "no" or "No"):
+    #second atempt
+    #while ((Choice != "y") or (Choice != "Y") or (Choice != "yes") or (Choice != "Yes")) and ((Choice != "n") or (Choice != "N") or (Choice != "no") or (Choice != "No")):
+    #third atempt
+    while (Choice!= "y") and (Choice != "Y") and (Choice != "yes") and (Choice != "Yes") and (Choice != "n") and (Choice != "N") and (Choice != "no") and (Choice != "No"):
+    #forth atempt
+    #while (Choice!= "y","yes","Y","Yes") and (Choice != "n","no","N","No"):
       Choice = GetChoiceFromUser()
     DisplayCard(NextCard)
     NoOfCardsTurnedOver = NoOfCardsTurnedOver + 1
     Higher = IsNextCardHigher(LastCard, NextCard)
-    if (Higher and Choice == 'y') or (not Higher and Choice == 'n'):
+    #if (Higher and Choice == "y") or (not Higher and Choice == "n"):
+    #first atempt
+    #if (Higher and Choice == "y" or "Y" or "yes" or "Yes") or (not Higher and Choice == "n" or "N" or "no" or "No"):
+    #second atempt
+    #if (Higher and (Choice == "y") or (Choice == "Y") or (Choice == "yes") or (Choice == "Yes")) or (not Higher and (Choice == "n") or (Choice == "N") or (Choice == "no") or (Choice == "No")):
+    #third atempt
+    if (Higher and ((Choice == "y") or (Choice == "Y") or (Choice == "yes") or (Choice == "Yes"))) or (not Higher and ((Choice == "n") or (Choice == "N") or (Choice == "no") or (Choice == "No"))):
+    #forth atempt
+    #if (Higher and Choice == "y","yes","Y","Yes") or (not Higher and Choice == "n","no","N","No"):
       DisplayCorrectGuessMessage(NoOfCardsTurnedOver - 1)
       LastCard.Rank = NextCard.Rank
       LastCard.Suit = NextCard.Suit
@@ -213,23 +231,25 @@ def PlayGame(Deck, RecentScores):
     DisplayEndOfGameMessage(51)
     UpdateRecentScores(RecentScores, 51)
 
-if __name__ == '__main__':
+if __name__ == "__main__":  
   for Count in range(1, 53):
     Deck.append(TCard())
   for Count in range(1, NO_OF_RECENT_SCORES + 1):
     RecentScores.append(TRecentScore())
-  Choice = ''
-  while Choice != 'q':
+  Choice = ""
+  #while Choice != "q":
+  while (Choice!= "q") and (Choice != "Q") and (Choice != "quit") and (Choice != "Quit"):
+  #while (Choice != "q" or "Q" or "Quit" or "quit"):
     DisplayMenu()
     Choice = GetMenuChoice()
-    if Choice == '1':
+    if Choice == "1":
       LoadDeck(Deck)
       ShuffleDeck(Deck)
       PlayGame(Deck, RecentScores)
-    elif Choice == '2':
+    elif Choice == "2":
       LoadDeck(Deck)
       PlayGame(Deck, RecentScores)
-    elif Choice == '3':
+    elif Choice == "3":
       DisplayRecentScores(RecentScores)
-    elif Choice == '4':
+    elif Choice == "4":
       ResetRecentScores(RecentScores)
