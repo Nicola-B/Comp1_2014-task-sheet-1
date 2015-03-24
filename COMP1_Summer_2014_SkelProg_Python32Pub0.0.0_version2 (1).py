@@ -77,6 +77,7 @@ def DisplayMenu():
   print('2. Play game (without shuffle)')
   print('3. Display recent scores')
   print('4. Reset recent scores')
+  print("5. Options")
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
@@ -125,10 +126,20 @@ def GetCard(ThisCard, Deck, NoOfCardsTurnedOver):
   Deck[52 - NoOfCardsTurnedOver].Suit = 0
   Deck[52 - NoOfCardsTurnedOver].Rank = 0
 
-def IsNextCardHigher(LastCard, NextCard):
-  Higher = False
-  if NextCard.Rank > LastCard.Rank:
-    Higher = True
+def IsNextCardHigher(LastCard, NextCard, AceH_Or_L):
+  if AceH_Or_L == "l":
+    Higher = False
+    if NextCard.Rank > LastCard.Rank:
+      Higher = True
+  else:
+    Higher = False
+    if NextCard.Rank == 1:
+      Higher = True
+    elif LastCard.Rank == 1:
+      Higher = False
+    else:
+      if NextCard.Rank > LastCard.Rank:
+        Higher = True
   return Higher
 
 def GetPlayerName():
@@ -208,8 +219,35 @@ def UpdateRecentScores(RecentScores, Score):
     RecentScores[Count].Date = current_date
   elif ((Uplode != "y") and (Uplode != "Y") and (Uplode != "yes") and (Uplode != "Yes") and (Uplode != "n") and (Uplode != "N") and (Uplode != "no") and (Uplode != "No")):
     UpdateRecentScores(RecentScores, Score)
-    
-def PlayGame(Deck, RecentScores):
+
+def DisplayOptions():
+  print()
+  print("OPTION MENU")
+  print()
+  print("1. Set Ace to be HIGH or LOW")
+  print()
+  print("Select anoption frommenu(or enter q to quit): ",end = "")
+
+def GetOptionChoice():
+  OptionChoice = input()
+  print()
+  return OptionChoice
+
+def SetAceHighOrLow():
+  AceH_Or_L = ""
+  while (AceH_Or_L != "h") and (AceH_Or_L != "l"):
+    print()
+    AceH_Or_L = input("Do you want the Ace to be (h)igh or (l)ow: ")
+    print()
+  return AceH_Or_L
+
+def SetOptions(OptionChoice):
+  while (OptionChoice!= "q") and (OptionChoice != "Q") and (OptionChoice != "quit") and (OptionChoice != "Quit"):
+    if OptionChoice == "1":
+      AceH_or_L = SetAceHighOrLow()
+  return AceH_or_L
+
+def PlayGame(Deck, RecentScores, AceH_Or_L):
   #pdb.set_trace()
   LastCard = TCard()
   NextCard = TCard()
@@ -232,7 +270,7 @@ def PlayGame(Deck, RecentScores):
       Choice = GetChoiceFromUser()
     DisplayCard(NextCard)
     NoOfCardsTurnedOver = NoOfCardsTurnedOver + 1
-    Higher = IsNextCardHigher(LastCard, NextCard)
+    Higher = IsNextCardHigher(LastCard, NextCard, AceH_Or_L)
     #if (Higher and Choice == "y") or (not Higher and Choice == "n"):
     #first atempt
     #if (Higher and Choice == "y" or "Y" or "yes" or "Yes") or (not Higher and Choice == "n" or "N" or "no" or "No"):
@@ -259,6 +297,7 @@ if __name__ == "__main__":
     Deck.append(TCard())
   for Count in range(1, NO_OF_RECENT_SCORES + 1):
     RecentScores.append(TRecentScore())
+  AceH_Or_L = "l"
   Choice = ""
   #while Choice != "q":
   while (Choice!= "q") and (Choice != "Q") and (Choice != "quit") and (Choice != "Quit"):
@@ -268,7 +307,7 @@ if __name__ == "__main__":
     if Choice == "1":
       LoadDeck(Deck)
       ShuffleDeck(Deck)
-      PlayGame(Deck, RecentScores)
+      PlayGame(Deck, RecentScores, AceH_Or_L)
     elif Choice == "2":
       LoadDeck(Deck)
       PlayGame(Deck, RecentScores)
@@ -276,3 +315,7 @@ if __name__ == "__main__":
       DisplayRecentScores(RecentScores)
     elif Choice == "4":
       ResetRecentScores(RecentScores)
+    elif Choice == "5":
+      DisplayOptions()
+      OptionChoice = GetOptionChoice()
+      AceH_Or_L = SetOptions(OptionChoice)
