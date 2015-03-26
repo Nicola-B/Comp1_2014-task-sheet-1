@@ -3,8 +3,8 @@
 # written by the AQA Programmer Team
 # developed in the Python 3.2 programming environment
 # version 2 edited 06/03/2014
-#Nicola Batty
-#1/03/2015
+# Nicola Batty
+# 1/03/2015
 
 from datetime import*
 import pdb
@@ -234,17 +234,19 @@ def GetOptionChoice():
   return OptionChoice
 
 def SetAceHighOrLow():
+  #pdb.set_trace()
   AceH_Or_L = ""
+  print()
   while (AceH_Or_L != "h") and (AceH_Or_L != "l"):
-    print()
     AceH_Or_L = input("Do you want the Ace to be (h)igh or (l)ow: ")
-    print()
+  print()
   return AceH_Or_L
 
 def SetOptions(OptionChoice):
   while (OptionChoice!= "q") and (OptionChoice != "Q") and (OptionChoice != "quit") and (OptionChoice != "Quit"):
     if OptionChoice == "1":
       AceH_or_L = SetAceHighOrLow()
+      OptionChoice = "q"
   return AceH_or_L
 
 def PlayGame(Deck, RecentScores, AceH_Or_L):
