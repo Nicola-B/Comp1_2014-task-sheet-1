@@ -178,7 +178,26 @@ def ResetRecentScores(RecentScores):
     RecentScores[Count].Score = 0
     RecentScores[Count].Date = datetime.now()
 
+def BubbleSortScores(RecentScores):
+  pdb.set_trace()
+  itam = TRecentScore()
+  Changes = False
+  while not Changes:
+    Changes = True
+    Count = 0
+    for itam in RecentScores:
+      itam = RecentScores[Count]
+      if Count < NO_OF_RECENT_SCORES - 1:
+        if itam > RecentScores[Count+1]:
+          Changes = False
+          Temp = score
+          RecentScores[Count] = RecentScores[Count+1]
+          RecentScores[Count+1] = Temp
+      Count = Count+1
+  return RecentScores
+
 def DisplayRecentScores(RecentScores):
+  RecentScores = BubbleSortScores(RecentScores)
   print()
   print('Recent Scores: ')
   print()
@@ -312,7 +331,7 @@ if __name__ == "__main__":
       PlayGame(Deck, RecentScores, AceH_Or_L)
     elif Choice == "2":
       LoadDeck(Deck)
-      PlayGame(Deck, RecentScores)
+      PlayGame(Deck, RecentScores, AceH_Or_L)
     elif Choice == "3":
       DisplayRecentScores(RecentScores)
     elif Choice == "4":
