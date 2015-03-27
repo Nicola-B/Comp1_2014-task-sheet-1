@@ -20,8 +20,8 @@ class TCard():
 class TRecentScore():
   def __init__(self):
     self.Name = ''
-    self.Score = 0
-    self.Date = datetime.now()
+    self.Score = ""
+    self.Date = ""
 
 Deck = [None]
 RecentScores = [None]
@@ -78,6 +78,7 @@ def DisplayMenu():
   print('3. Display recent scores')
   print('4. Reset recent scores')
   print("5. Options")
+  print("6. save scores")
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
@@ -180,31 +181,31 @@ def ResetRecentScores(RecentScores):
 
 def BubbleSortScores(RecentScores):
   pdb.set_trace()
-  itam = TRecentScore()
   Changes = False
   while not Changes:
     Changes = True
     Count = 0
     for itam in RecentScores:
-      itam = RecentScores[Count]
       if Count < NO_OF_RECENT_SCORES - 1:
-        if itam > RecentScores[Count+1]:
+        if itam.Score < RecentScores[Count+1].Score:
           Changes = False
-          Temp = score
+          Temp = itam
           RecentScores[Count] = RecentScores[Count+1]
           RecentScores[Count+1] = Temp
-      Count = Count+1
+        Count = Count+1
   return RecentScores
 
 def DisplayRecentScores(RecentScores):
   RecentScores = BubbleSortScores(RecentScores)
+  for line in RecentScores:
+    line.Date = datetime.now()
   print()
   print('Recent Scores: ')
   print()
   print("_"*42)
   print("|{0:<25}|{1:<5}|{2:<8}|".format("Name", "Score", "Date"))
   print("_"*42)
-  for Count in range(1, NO_OF_RECENT_SCORES + 1):
+  for Count in range(NO_OF_RECENT_SCORES):
     current_date = RecentScores[Count].Date
     current_date_string = datetime.strftime(current_date,"%d/%m/%y")
     print("|{0:<25}|{1:<5}|{2:<8}|".format(RecentScores[Count].Name, RecentScores[Count].Score, current_date_string))
@@ -215,6 +216,7 @@ def DisplayRecentScores(RecentScores):
   print()
 
 def UpdateRecentScores(RecentScores, Score):
+  Score = str(Score)
   #pdb.set_trace()
   Uplode = input("Do you want to add your score to the high socres table? (y or n): ")
   if ((Uplode == "y") or (Uplode == "Y") or (Uplode == "yes") or (Uplode == "Yes")):
@@ -222,13 +224,13 @@ def UpdateRecentScores(RecentScores, Score):
     PlayerName = GetPlayerName()
     FoundSpace = False
     Count = 1
-    while (not FoundSpace) and (Count <= NO_OF_RECENT_SCORES):
+    while (not FoundSpace) and (Count <= NO_OF_RECENT_SCORES - 1):
       if RecentScores[Count].Name == '':
         FoundSpace = True
       else:
         Count = Count + 1
     if not FoundSpace:
-      for Count in range(1, NO_OF_RECENT_SCORES):
+      for Count in range(NO_OF_RECENT_SCORES):
         RecentScores[Count].Name = RecentScores[Count + 1].Name
         RecentScores[Count].Score = RecentScores[Count + 1].Score
         RecentScores[Count].Date = RecentScores[Count + 1].Date
@@ -238,6 +240,31 @@ def UpdateRecentScores(RecentScores, Score):
     RecentScores[Count].Date = current_date
   elif ((Uplode != "y") and (Uplode != "Y") and (Uplode != "yes") and (Uplode != "Yes") and (Uplode != "n") and (Uplode != "N") and (Uplode != "no") and (Uplode != "No")):
     UpdateRecentScores(RecentScores, Score)
+
+def SavedScores(RecentScores):
+  pdb.set_trace()
+  with open("save_scores.txt", mode="w", encoding="utf-8") as SaveScores:
+    for line in RecentScores:
+      line_date = line.Date
+      line_date_string = datetime.strftime(line_date, "%d/%m/%Y")
+      SaveScores.write(line.Name)
+      SaveScores.write("/n")
+      SaveScores.write(line.Score)
+      SaveScores.write("/n")
+      SaveScores.write(line_date_string)
+      SaveScores.write("/n")
+
+def LoadScores():
+  try:
+    with open("save_scores.txt", mode="r", encoding="utf-8") as SaveScores:
+      Score = TRecentScore()
+      RecentScores = []
+      for line in SaveScores:
+        Score = line
+        RecentScores.append(Score)
+  except FileNotFoundError:
+    RecentScores = []
+  return RecentScores
 
 def DisplayOptions():
   print()
@@ -279,28 +306,12 @@ def PlayGame(Deck, RecentScores, AceH_Or_L):
   while (NoOfCardsTurnedOver < 52) and (not GameOver):
     GetCard(NextCard, Deck, NoOfCardsTurnedOver)
     Choice = ""
-    #while (Choice!= "y") and (Choice != "n"):
-    #first atempt
-    #while (Choice != "y" or "Y" or "yes" or "Yes") and (Choice != "n" or "N" or "no" or "No"):
-    #second atempt
-    #while ((Choice != "y") or (Choice != "Y") or (Choice != "yes") or (Choice != "Yes")) and ((Choice != "n") or (Choice != "N") or (Choice != "no") or (Choice != "No")):
-    #third atempt
     while (Choice!= "y") and (Choice != "Y") and (Choice != "yes") and (Choice != "Yes") and (Choice != "n") and (Choice != "N") and (Choice != "no") and (Choice != "No"):
-    #forth atempt
-    #while (Choice!= "y","yes","Y","Yes") and (Choice != "n","no","N","No"):
       Choice = GetChoiceFromUser()
     DisplayCard(NextCard)
     NoOfCardsTurnedOver = NoOfCardsTurnedOver + 1
     Higher = IsNextCardHigher(LastCard, NextCard, AceH_Or_L)
-    #if (Higher and Choice == "y") or (not Higher and Choice == "n"):
-    #first atempt
-    #if (Higher and Choice == "y" or "Y" or "yes" or "Yes") or (not Higher and Choice == "n" or "N" or "no" or "No"):
-    #second atempt
-    #if (Higher and (Choice == "y") or (Choice == "Y") or (Choice == "yes") or (Choice == "Yes")) or (not Higher and (Choice == "n") or (Choice == "N") or (Choice == "no") or (Choice == "No")):
-    #third atempt
     if (Higher and ((Choice == "y") or (Choice == "Y") or (Choice == "yes") or (Choice == "Yes"))) or (not Higher and ((Choice == "n") or (Choice == "N") or (Choice == "no") or (Choice == "No"))):
-    #forth atempt
-    #if (Higher and Choice == "y","yes","Y","Yes") or (not Higher and Choice == "n","no","N","No"):
       DisplayCorrectGuessMessage(NoOfCardsTurnedOver - 1)
       LastCard.Rank = NextCard.Rank
       LastCard.Suit = NextCard.Suit
@@ -313,7 +324,8 @@ def PlayGame(Deck, RecentScores, AceH_Or_L):
     DisplayEndOfGameMessage(51)
     UpdateRecentScores(RecentScores, 51)
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
+  RecentScores = LoadScores()
   for Count in range(1, 53):
     Deck.append(TCard())
   for Count in range(1, NO_OF_RECENT_SCORES + 1):
@@ -340,3 +352,5 @@ if __name__ == "__main__":
       DisplayOptions()
       OptionChoice = GetOptionChoice()
       AceH_Or_L = SetOptions(OptionChoice)
+    elif Choice == "6":
+      SavedScores(RecentScores)
