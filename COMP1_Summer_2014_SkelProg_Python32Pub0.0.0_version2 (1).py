@@ -4,6 +4,7 @@
 # developed in the Python 3.2 programming environment
 # version 2 edited 06/03/2014
 # Nicola Batty
+
 # 1/03/2015
 
 from datetime import*
@@ -21,7 +22,7 @@ class TRecentScore():
   def __init__(self):
     self.Name = ''
     self.Score = ""
-    self.Date = ""
+    self.Date = datetime.now()
 
 Deck = [None]
 RecentScores = [None]
@@ -180,7 +181,7 @@ def ResetRecentScores(RecentScores):
     RecentScores[Count].Date = datetime.now()
 
 def BubbleSortScores(RecentScores):
-  pdb.set_trace()
+  #pdb.set_trace()
   Changes = False
   while not Changes:
     Changes = True
@@ -205,10 +206,10 @@ def DisplayRecentScores(RecentScores):
   print("_"*42)
   print("|{0:<25}|{1:<5}|{2:<8}|".format("Name", "Score", "Date"))
   print("_"*42)
-  for Count in range(NO_OF_RECENT_SCORES):
+  for score in RecentScores:
     current_date = RecentScores[Count].Date
     current_date_string = datetime.strftime(current_date,"%d/%m/%y")
-    print("|{0:<25}|{1:<5}|{2:<8}|".format(RecentScores[Count].Name, RecentScores[Count].Score, current_date_string))
+    print("|{0:<25}|{1:<5}|{2:<8}|".format(score.Name, score.Score, current_date_string))
     print("_"*42)
   print()
   print('Press the Enter key to return to the main menu')
@@ -230,7 +231,7 @@ def UpdateRecentScores(RecentScores, Score):
       else:
         Count = Count + 1
     if not FoundSpace:
-      for Count in range(NO_OF_RECENT_SCORES):
+      for Count in range(NO_OF_RECENT_SCORES - 1):
         RecentScores[Count].Name = RecentScores[Count + 1].Name
         RecentScores[Count].Score = RecentScores[Count + 1].Score
         RecentScores[Count].Date = RecentScores[Count + 1].Date
@@ -242,7 +243,7 @@ def UpdateRecentScores(RecentScores, Score):
     UpdateRecentScores(RecentScores, Score)
 
 def SavedScores(RecentScores):
-  pdb.set_trace()
+  #pdb.set_trace()
   with open("save_scores.txt", mode="w", encoding="utf-8") as SaveScores:
     for line in RecentScores:
       line_date = line.Date
@@ -257,13 +258,24 @@ def SavedScores(RecentScores):
 def LoadScores():
   try:
     with open("save_scores.txt", mode="r", encoding="utf-8") as SaveScores:
-      Score = TRecentScore()
+      scores = TRecentScore()
       RecentScores = []
+      Count = 0
       for line in SaveScores:
-        Score = line
-        RecentScores.append(Score)
+        if Count == 0:
+          scores.Name = line
+          Count = Count + 1
+        elif Count == 1:
+          scores.Score = line
+          Count = Count + 1
+        elif Count == 2:
+          scores.Date = line
+          Count = 0
+          RecentScores.append(scores)
   except FileNotFoundError:
     RecentScores = []
+    for Count in range(1, NO_OF_RECENT_SCORES + 1):
+      RecentScores.append(TRecentScore())
   return RecentScores
 
 def DisplayOptions():
@@ -328,13 +340,9 @@ if __name__ == "__main__":
   RecentScores = LoadScores()
   for Count in range(1, 53):
     Deck.append(TCard())
-  for Count in range(1, NO_OF_RECENT_SCORES + 1):
-    RecentScores.append(TRecentScore())
   AceH_Or_L = "l"
   Choice = ""
-  #while Choice != "q":
   while (Choice!= "q") and (Choice != "Q") and (Choice != "quit") and (Choice != "Quit"):
-  #while (Choice != "q" or "Q" or "Quit" or "quit"):
     DisplayMenu()
     Choice = GetMenuChoice()
     if Choice == "1":
