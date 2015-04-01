@@ -2,7 +2,9 @@
 # this code should be used in conjunction with the Preliminary Material
 # written by the AQA COMP1 Programmer Team
 # developed in the Python 3.4 programming environment
+# Nicola Batty
 
+import pdb
 BOARDDIMENSION = 8
 
 def CreateBoard():
@@ -20,7 +22,16 @@ def DisplayWhoseTurnItIs(WhoseTurn):
     print("It is Black's turn")
 
 def GetTypeOfGame():
+  pdb.set_trace()
+  yes_list = ["y", "yes", "Y", "Yes"]
+  no_list = ["n", "no", "N", "No"]
   TypeOfGame = input("Do you want to play the sample game (enter Y for Yes)? ")
+  if TypeOfGame in no_list:
+    TypeOfGame = "n"
+  elif TypeOfGame in yes_list:
+    TypeOfGame = "y"
+  else:
+    TypeOfGame = GetTypeOfGame()
   return TypeOfGame
 
 def DisplayWinner(WhoseTurn):
@@ -211,7 +222,13 @@ if __name__ == "__main__":
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
+    yes_list = ["y", "yes", "Y", "Yes"]
+    no_list = ["n", "no", "N", "No"]
     SampleGame = input("Do you want to play the sample game (enter Y for Yes)? ")
+    if SampleGame in yes_list:
+      SampleGame = "y"
+    elif SampleGame in no_list:
+      SampleGame = "n"
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
     InitialiseBoard(Board, SampleGame)
