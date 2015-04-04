@@ -129,21 +129,31 @@ def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
 
 def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   MoveIsLegal = True
-  if (FinishFile == StartFile) and (FinishRank == StartRank):
-    MoveIsLegal = False
-  else:
-    PieceType = Board[StartRank][StartFile][1]
-    PieceColour = Board[StartRank][StartFile][0]
-    if WhoseTurn == "W":
-      if PieceColour != "W":
-        MoveIsLegal = False
-      if Board[FinishRank][FinishFile][0] == "W":
-        MoveIsLegal = False
+  if MoveIsLegal == True:
+    if FinishRank == 0:
+      MoveIsLegal = False
+    elif FinishRank == 9:
+      MoveIsLegal = False
+    elif FinishFile == 0:
+      MoveIsLegal = False
+    elif FinishFile == 9:
+      MoveIsLegal = False
+  if MoveIsLegal == True:
+    if (FinishFile == StartFile) and (FinishRank == StartRank):
+      MoveIsLegal = False
     else:
-      if PieceColour != "B":
-        MoveIsLegal = False
-      if Board[FinishRank][FinishFile][0] == "B":
-        MoveIsLegal = False
+      PieceType = Board[StartRank][StartFile][1]
+      PieceColour = Board[StartRank][StartFile][0]
+      if WhoseTurn == "W":
+        if PieceColour != "W":
+          MoveIsLegal = False
+        if Board[FinishRank][FinishFile][0] == "W":
+          MoveIsLegal = False
+      else:
+        if PieceColour != "B":
+          MoveIsLegal = False
+        if Board[FinishRank][FinishFile][0] == "B":
+          MoveIsLegal = False
     if MoveIsLegal == True:
       if PieceType == "R":
         MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour)
@@ -198,8 +208,21 @@ def InitialiseBoard(Board, SampleGame):
           Board[RankNo][FileNo] = "  "    
                     
 def GetMove(StartSquare, FinishSquare):
-  StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
-  FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
+  try:
+    StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
+  except ValueError:
+    print("That is not coordinates - please try again")
+  if StartSquare < 10:
+    print("Please provide both FILE and RANK for this move")
+    StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+  else:
+    try:
+      FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
+    except ValueError:
+      print("That is not coordinates - please try again")
+    if FinishSquare < 10:
+      print("Please provide both FILE and RANK for this move")
+      StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
   return StartSquare, FinishSquare
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
