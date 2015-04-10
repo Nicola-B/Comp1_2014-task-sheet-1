@@ -49,14 +49,14 @@ def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
 def DisplayBoard(Board):
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
-    print("     _______________________")
-    print(RankNo, end="   ")
+    print("     -------------------------")
+    print("R{0}".format(RankNo), end="   ")
     for FileNo in range(1, BOARDDIMENSION + 1):
       print("|" + Board[RankNo][FileNo], end="")
     print("|")
-  print("     _______________________")
+  print("     -------------------------")
   print()
-  print("      1  2  3  4  5  6  7  8")
+  print("      F1  F2  F3  F4  F5  F6  F7  F8")
   print()
   print()    
 
@@ -169,6 +169,13 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
         MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
+def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
+  print()
+  print("Move form Rank {0}, File {1} to Rank {0}, File {0}".format(StartRank, StartFile, FinishRank, FinishFile))
+  confirm_move = input("Confirm move (yes/no): ")
+  print()
+  return confirm_move
+
 def InitialiseBoard(Board, SampleGame):
   if SampleGame == "Y":
     for RankNo in range(1, BOARDDIMENSION + 1):
@@ -225,18 +232,50 @@ def GetMove(StartSquare, FinishSquare):
       StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
   return StartSquare, FinishSquare
 
+def GetPieceName(FinishRank, FinishFile, Board):
+  Pieces = True
+  PiecesColour = ""
+  PiecesType = ""
+  if Board[FinishRank][FinishFile][0] == "w":
+    PiecesColour = "White"
+  elif Board[FinishRank][FinishFile][0] == "B":
+    PiecesColour = "Black"
+  else:
+    Pieces = False
+  if Board[FinishRank][FinishFile][1] == "G":
+    PiecesType = "Gisgigir"
+  elif Board[FinishRank][FinishFile][1] == "E":
+    PiecesType = "Etlu"
+  elif Board[FinishRank][FinishFile][1] == "N":
+    PiecesType = "Nabu"
+  elif Board[FinishRank][FinishFile][1] == "R":
+    PiecesType = "Redum"
+  elif Board[FinishRank][FinishFile][1] == "S":
+    PiecesType = "Sarrum"
+  elif Board[FinishRank][FinishFile][1] == "M":
+    PiecesType = "Marzaz pani"
+  return Pieces, PiecesColour, PiecesType
+
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
+    print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
     Board[StartRank][StartFile] = "  "
   elif WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
+    print("Black Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "BM"
     Board[StartRank][StartFile] = "  "
   else:
-    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-    Board[StartRank][StartFile] = "  "
+    Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+    if not Pieces:
+      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+      Board[StartRank][StartFile] = "  "
+    else:
+      Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
+      print("{0} {1} takes {2} {3}.".format(PiecesColour1, PiecesType1, PiecesColour2, PiecesType2))
+      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+      Board[StartRank][StartFile] = "  "
 
-    
 if __name__ == "__main__":
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
@@ -268,6 +307,17 @@ if __name__ == "__main__":
         MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
         if not(MoveIsLegal):
           print("That is not a legal move - please try again")
+        else:
+          correct = False
+          while not correct:
+            correct = True
+            confirm_move = ConfirmMove(StartRank, StartFile, FinishRank, FinishFile)
+            if confirm_move in yes_list:
+              MoveIsLegal = True
+            elif confirm_move in no_list:
+              MoveIsLegal = False
+            else:
+              correct = False
       GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
       MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
       if GameOver:
