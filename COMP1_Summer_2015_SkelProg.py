@@ -22,7 +22,7 @@ def DisplayWhoseTurnItIs(WhoseTurn):
     print("It is Black's turn")
 
 def GetTypeOfGame():
-  pdb.set_trace()
+  #pdb.set_trace()
   yes_list = ["y", "yes", "Y", "Yes"]
   no_list = ["n", "no", "N", "No"]
   TypeOfGame = input("Do you want to play the sample game (enter Y for Yes)? ")
