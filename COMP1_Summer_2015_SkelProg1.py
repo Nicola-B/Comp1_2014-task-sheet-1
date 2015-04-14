@@ -202,7 +202,6 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
 
-    
 if __name__ == "__main__":
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
