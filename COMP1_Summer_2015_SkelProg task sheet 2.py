@@ -82,10 +82,25 @@ def DisplayBoard(Board):
   print()
   print()    
 
-def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece):
+def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, moves):
   CheckRedumMoveIsLegal = False
   if ColourOfPiece == "W":
-    if FinishRank == StartRank - 1:
+    if moves == 1:
+      if FinishRank == StartRank - 2:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+      elif FinishRank == StartRank - 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+    else:
+      if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+        CheckRedumMoveIsLegal = True
+      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+        CheckRedumMoveIsLegal = True
       if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
         CheckRedumMoveIsLegal = True
       elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
@@ -153,17 +168,16 @@ def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
     CheckEtluMoveIsLegal = True
   return CheckEtluMoveIsLegal
 
-def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
+def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves):
   MoveIsLegal = True
-  if MoveIsLegal == True:
-    if FinishRank == 0:
-      MoveIsLegal = False
-    elif FinishRank == 9:
-      MoveIsLegal = False
-    elif FinishFile == 0:
-      MoveIsLegal = False
-    elif FinishFile == 9:
-      MoveIsLegal = False
+  if FinishRank == 0:
+    MoveIsLegal = False
+  elif FinishRank == BOARDDIMENSION + 1:
+    MoveIsLegal = False
+  elif FinishFile == 0:
+    MoveIsLegal = False
+  elif FinishFile == BOARDDIMENSION + 1:
+    MoveIsLegal = False
   if MoveIsLegal == True:
     if (FinishFile == StartFile) and (FinishRank == StartRank):
       MoveIsLegal = False
@@ -182,7 +196,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
           MoveIsLegal = False
     if MoveIsLegal == True:
       if PieceType == "R":
-        MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour)
+        MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour, moves)
       elif PieceType == "S":
         MoveIsLegal = CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
       elif PieceType == "M":
@@ -275,7 +289,7 @@ def GetMove(StartSquare, FinishSquare, Board, WhoseTurn):
     Quit = make_in_game_solection(solection, Board, WhoseTurn)
   elif StartSquare < 10:
     print("Please provide both FILE and RANK for this move")
-    StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board)
+    StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
   else:
     try:
       FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
@@ -283,7 +297,7 @@ def GetMove(StartSquare, FinishSquare, Board, WhoseTurn):
       print("That is not coordinates - please try again")
     if FinishSquare < 10:
       print("Please provide both FILE and RANK for this move")
-      StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board)
+      StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
   return StartSquare, FinishSquare, Quit
 
 def get_menu_solection():
@@ -304,7 +318,7 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
     Quit = False
   elif solection == 4:
     print()
-    print("Surrenkering...")
+    print("Surrendering...")
     print()
     if WhoseTurn == "W":
       print("White surrendered. Black wins!")
@@ -315,7 +329,7 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
   else:
     print("please make a valid solection")
     solection = get_menu_solection()
-    Quit = make_in_game_solection(solection, Borad)
+    Quit = make_in_game_solection(solection, Borad, WhoseTurn)
   return Quit
 
 def make_solection(solection, Quit):
@@ -387,9 +401,12 @@ def play_game(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
+  moves = 0
   PlayAgain = "Y"
   while PlayAgain == "Y":
     WhoseTurn = "W"
+    if WhoseTurn == "W":
+      moves = moves + 1
     GameOver = False
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
@@ -400,14 +417,14 @@ def play_game(SampleGame):
       MoveIsLegal = False
       while not(MoveIsLegal):
         StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
-        if Quit:
+        if (Quit):
           MoveIsLegal = True
-        else:
+        elif not (Quit):
           StartRank = StartSquare % 10
           StartFile = StartSquare // 10
           FinishRank = FinishSquare % 10
           FinishFile = FinishSquare // 10
-          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
           else:
@@ -421,22 +438,22 @@ def play_game(SampleGame):
                 MoveIsLegal = False
               else:
                 correct = False
-  if Quit:
-    GameOver = True
-    PlayAgain = "N"
-  else:
-    GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-    MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-    if GameOver:
-      DisplayWinner(WhoseTurn)
-    if WhoseTurn == "W":
-      WhoseTurn = "B"
-    else:
-      WhoseTurn = "W"
-    PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-  print()
-  if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-    PlayAgain = chr(ord(PlayAgain) - 32)
+        if Quit:
+          GameOver = True
+          PlayAgain = "N"
+        else:
+          GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+          MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          if GameOver:
+            DisplayWinner(WhoseTurn)
+            PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
+          if WhoseTurn == "W":
+            WhoseTurn = "B"
+          else:
+            WhoseTurn = "W"
+        print()
+        if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+          PlayAgain = chr(ord(PlayAgain) - 32)
 
 if __name__ == "__main__":
   Quit = False
