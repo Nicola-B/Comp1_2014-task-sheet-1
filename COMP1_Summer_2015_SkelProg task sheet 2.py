@@ -52,7 +52,7 @@ def display_menu():
   print("Main Menu")
   print()
   print("1. Start new game")
-  print("2. Load ezistin game")
+  print("2. Load existing game")
   print("3. Play sample game")
   print("4. View high scores")
   print("5. Settings")
@@ -65,6 +65,7 @@ def display_in_game_menu():
   print("1. Save Game")
   print("2. Quit to Menu")
   print("3. Return to Game")
+  print("4. Surender")
   print()
 
 def DisplayBoard(Board):
@@ -77,7 +78,7 @@ def DisplayBoard(Board):
     print("|")
   print("     -------------------------")
   print()
-  print("      F1  F2  F3  F4  F5  F6  F7  F8")
+  print("      F1 F2 F3 F4 F5 F6 F7 F8")
   print()
   print()    
 
@@ -132,7 +133,7 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckNabuMoveIsLegal = False
-  if abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1:
+  if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     CheckNabuMoveIsLegal = True
   return CheckNabuMoveIsLegal
 
@@ -140,11 +141,15 @@ def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFi
   CheckMarzazPaniMoveIsLegal = False
   if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1):
     CheckMarzazPaniMoveIsLegal = True
+  elif abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1:
+    CheckMarzazPaniMoveIsLegal = True
   return CheckMarzazPaniMoveIsLegal
 
 def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckEtluMoveIsLegal = False
-  if (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) == 2):
+  if (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 1) or (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2):
+    CheckEtluMoveIsLegal = True
+  elif (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2) or (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 1):
     CheckEtluMoveIsLegal = True
   return CheckEtluMoveIsLegal
 
@@ -190,21 +195,22 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
         MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
-def load_game():
-  try:
-    with open("saved_game.dat", mode="rb") as SavedGame:
-      Bord = SavedGame
-      return Bord
-  except FileNotFoundError:
-    print()
-    print("There is no saved game")
-    print()
+#def load_game():
+#  try:
+#    with open("saved_game.dat", mode="rb") as SavedGame:
+#      Board = SavedGame
+#      return Board
+#  except FileNotFoundError:
+#    print()
+#   print("There is no saved game")
+#    print()
     
-def save_game(Bord):
-  with open("saved_game.dat", mode="wb") as SavedGame:
-    for line in Bord:
-      SavedGame.write(line)
-      savedGame.write("/n")
+#def save_game(Board):
+#  with open("saved_game.dat", mode="wb") as SavedGame:
+#    for line in Board:
+#      for count in line:
+#        SavedGame.write(count)
+#      SavedGame.write("/n")
 
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   print()
@@ -215,6 +221,11 @@ def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
 
 def InitialiseBoard(Board, SampleGame):
   if SampleGame == "Y":
+    InitialiseSampleBoard(Board)
+  else:
+    InitialiseNewBoard(Board)
+
+def InitialiseSampleBoard(Board):
     for RankNo in range(1, BOARDDIMENSION + 1):
       for FileNo in range(1, BOARDDIMENSION + 1):
         Board[RankNo][FileNo] = "  "
@@ -226,44 +237,45 @@ def InitialiseBoard(Board, SampleGame):
     Board[3][2] = "BE"
     Board[3][8] = "BE"
     Board[6][8] = "BR"
-  else:
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):
-        if RankNo == 2:
-          Board[RankNo][FileNo] = "BR"
-        elif RankNo == 7:
-          Board[RankNo][FileNo] = "WR"
-        elif RankNo == 1 or RankNo == 8:
-          if RankNo == 1:
-            Board[RankNo][FileNo] = "B"
-          if RankNo == 8:
-            Board[RankNo][FileNo] = "W"
-          if FileNo == 1 or FileNo == 8:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
-          elif FileNo == 2 or FileNo == 7:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
-          elif FileNo == 3 or FileNo == 6:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
-          elif FileNo == 4:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
-          elif FileNo == 5:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
-        else:
-          Board[RankNo][FileNo] = "  "    
+
+def InitialiseNewBoard(Board):
+  for RankNo in range(1, BOARDDIMENSION + 1):
+    for FileNo in range(1, BOARDDIMENSION + 1):
+      if RankNo == 2:
+        Board[RankNo][FileNo] = "BR"
+      elif RankNo == 7:
+        Board[RankNo][FileNo] = "WR"
+      elif RankNo == 1 or RankNo == 8:
+        if RankNo == 1:
+          Board[RankNo][FileNo] = "B"
+        if RankNo == 8:
+          Board[RankNo][FileNo] = "W"
+        if FileNo == 1 or FileNo == 8:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
+        elif FileNo == 2 or FileNo == 7:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
+        elif FileNo == 3 or FileNo == 6:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
+        elif FileNo == 4:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+        elif FileNo == 5:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+      else:
+        Board[RankNo][FileNo] = "  "    
                     
-def GetMove(StartSquare, FinishSquare):
+def GetMove(StartSquare, FinishSquare, Board, WhoseTurn):
   Quit = False
   try:
     StartSquare = int(input("Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "))
   except ValueError:
     print("That is not coordinates - please try again")
-  if StartSquare < 10:
-    print("Please provide both FILE and RANK for this move")
-    StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-  elif StartSquare == -1:
+  if StartSquare == -1:
     display_in_game_menu()
     solection = get_menu_solection()
-    Quit = make_in_game_solection(solection, Borad)
+    Quit = make_in_game_solection(solection, Board, WhoseTurn)
+  elif StartSquare < 10:
+    print("Please provide both FILE and RANK for this move")
+    StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board)
   else:
     try:
       FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
@@ -271,7 +283,7 @@ def GetMove(StartSquare, FinishSquare):
       print("That is not coordinates - please try again")
     if FinishSquare < 10:
       print("Please provide both FILE and RANK for this move")
-      StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+      StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board)
   return StartSquare, FinishSquare, Quit
 
 def get_menu_solection():
@@ -282,7 +294,7 @@ def get_menu_solection():
     solection = get_menu_solection()
   return solection
 
-def make_in_game_solection(solection, Borad):
+def make_in_game_solection(solection, Borad, WhoseTurn):
   if solection == 1:
     save_game(Borad)
     Quit = make_in_game_solection(solection, Borad)
@@ -290,6 +302,16 @@ def make_in_game_solection(solection, Borad):
     Quit = True
   elif solection == 3:
     Quit = False
+  elif solection == 4:
+    print()
+    print("Surrenkering...")
+    print()
+    if WhoseTurn == "W":
+      print("White surrendered. Black wins!")
+    else:
+      print("Black surrendered. White wins!")
+    print()
+    Quit = True
   else:
     print("please make a valid solection")
     solection = get_menu_solection()
@@ -357,7 +379,7 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
       Board[StartRank][StartFile] = "  "
     else:
       Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-      print("{0} {1} takes {2} {3}.".format(PiecesColour1, PiecesType1, PiecesColour2, PiecesType2))
+      print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
       Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
       Board[StartRank][StartFile] = "  "
 
@@ -377,10 +399,9 @@ def play_game(SampleGame):
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
-        StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare)
+        StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
         if Quit:
           MoveIsLegal = True
-          GameOver = True
         else:
           StartRank = StartSquare % 10
           StartFile = StartSquare // 10
@@ -400,20 +421,22 @@ def play_game(SampleGame):
                 MoveIsLegal = False
               else:
                 correct = False
-      if not GameOver:
-        GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-        MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-        if GameOver:
-          DisplayWinner(WhoseTurn)
-        if WhoseTurn == "W":
-          WhoseTurn = "B"
-        else:
-          WhoseTurn = "W"
-      PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-      if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-        PlayAgain = chr(ord(PlayAgain) - 32)
-      else:
-        PlayAgain = "N"
+  if Quit:
+    GameOver = True
+    PlayAgain = "N"
+  else:
+    GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+    MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+    if GameOver:
+      DisplayWinner(WhoseTurn)
+    if WhoseTurn == "W":
+      WhoseTurn = "B"
+    else:
+      WhoseTurn = "W"
+    PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
+  print()
+  if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+    PlayAgain = chr(ord(PlayAgain) - 32)
 
 if __name__ == "__main__":
   Quit = False
