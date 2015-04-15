@@ -59,6 +59,14 @@ def display_menu():
   print("6. Quit program")
   print()
 
+def display_in_game_menu():
+  print("Options")
+  print()
+  print("1. Save Game")
+  print("2. Quit to Menu")
+  print("3. Return to Game")
+  print()
+
 def DisplayBoard(Board):
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
@@ -182,6 +190,22 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
         MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
+def load_game():
+  try:
+    with open("saved_game.dat", mode="rb") as SavedGame:
+      Bord = SavedGame
+      return Bord
+  except FileNotFoundError:
+    print()
+    print("There is no saved game")
+    print()
+    
+def save_game(Bord):
+  with open("saved_game.dat", mode="wb") as SavedGame:
+    for line in Bord:
+      SavedGame.write(line)
+      savedGame.write("/n")
+
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   print()
   print("Move form Rank {0}, File {1} to Rank {0}, File {0}".format(StartRank, StartFile, FinishRank, FinishFile))
@@ -228,13 +252,18 @@ def InitialiseBoard(Board, SampleGame):
           Board[RankNo][FileNo] = "  "    
                     
 def GetMove(StartSquare, FinishSquare):
+  Quit = False
   try:
-    StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
+    StartSquare = int(input("Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "))
   except ValueError:
     print("That is not coordinates - please try again")
   if StartSquare < 10:
     print("Please provide both FILE and RANK for this move")
     StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+  elif StartSquare == -1:
+    display_in_game_menu()
+    solection = get_menu_solection()
+    Quit = make_in_game_solection(solection, Borad)
   else:
     try:
       FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
@@ -243,7 +272,7 @@ def GetMove(StartSquare, FinishSquare):
     if FinishSquare < 10:
       print("Please provide both FILE and RANK for this move")
       StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-  return StartSquare, FinishSquare
+  return StartSquare, FinishSquare, Quit
 
 def get_menu_solection():
   try:
@@ -252,6 +281,20 @@ def get_menu_solection():
     print("Please enter a number.")
     solection = get_menu_solection()
   return solection
+
+def make_in_game_solection(solection, Borad):
+  if solection == 1:
+    save_game(Borad)
+    Quit = make_in_game_solection(solection, Borad)
+  elif solection == 2:
+    Quit = True
+  elif solection == 3:
+    Quit = False
+  else:
+    print("please make a valid solection")
+    solection = get_menu_solection()
+    Quit = make_in_game_solection(solection, Borad)
+  return Quit
 
 def make_solection(solection, Quit):
   if solection == 1:
@@ -271,7 +314,7 @@ def make_solection(solection, Quit):
   else:
     print("please make a valid solection")
     solection = get_menu_solection()
-    make_solection(solection)
+    Quit = make_solection(solection, Quit)
   return Quit
 
 def GetPieceName(FinishRank, FinishFile, Board):
@@ -334,36 +377,43 @@ def play_game(SampleGame):
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
-        StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-        StartRank = StartSquare % 10
-        StartFile = StartSquare // 10
-        FinishRank = FinishSquare % 10
-        FinishFile = FinishSquare // 10
-        MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-        if not(MoveIsLegal):
-          print("That is not a legal move - please try again")
+        StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare)
+        if Quit:
+          MoveIsLegal = True
+          GameOver = True
         else:
-          correct = False
-          while not correct:
-            correct = True
-            confirm_move = ConfirmMove(StartRank, StartFile, FinishRank, FinishFile)
-            if confirm_move in yes_list:
-              MoveIsLegal = True
-            elif confirm_move in no_list:
-              MoveIsLegal = False
-            else:
-              correct = False
-      GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-      MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-      if GameOver:
-        DisplayWinner(WhoseTurn)
-      if WhoseTurn == "W":
-        WhoseTurn = "B"
+          StartRank = StartSquare % 10
+          StartFile = StartSquare // 10
+          FinishRank = FinishSquare % 10
+          FinishFile = FinishSquare // 10
+          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          if not(MoveIsLegal):
+            print("That is not a legal move - please try again")
+          else:
+            correct = False
+            while not correct:
+              correct = True
+              confirm_move = ConfirmMove(StartRank, StartFile, FinishRank, FinishFile)
+              if confirm_move in yes_list:
+                MoveIsLegal = True
+              elif confirm_move in no_list:
+                MoveIsLegal = False
+              else:
+                correct = False
+      if not GameOver:
+        GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+        MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+        if GameOver:
+          DisplayWinner(WhoseTurn)
+        if WhoseTurn == "W":
+          WhoseTurn = "B"
+        else:
+          WhoseTurn = "W"
+      PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
+      if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+        PlayAgain = chr(ord(PlayAgain) - 32)
       else:
-        WhoseTurn = "W"
-    PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-    if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-      PlayAgain = chr(ord(PlayAgain) - 32)
+        PlayAgain = "N"
 
 if __name__ == "__main__":
   Quit = False
