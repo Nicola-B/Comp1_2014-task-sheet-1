@@ -128,11 +128,6 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
           CheckRedumMoveIsLegal = True
         elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
           CheckRedumMoveIsLegal = True
-    if FinishRank == StartRank + 1:
-      if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
-        CheckRedumMoveIsLegal = True
-      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
-        CheckRedumMoveIsLegal = True
   return CheckRedumMoveIsLegal
 
 def CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -260,7 +255,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   #pdb.set_trace()
   print()
-  print("Move form Rank {0}, File {1} to Rank {0}, File {0}".format(StartRank, StartFile, FinishRank, FinishFile))
+  print("Move form Rank {0}, File {1} to Rank {2}, File {3}".format(StartRank, StartFile, FinishRank, FinishFile))
   confirm_move = input("Confirm move (yes/no): ")
   print()
   return confirm_move
@@ -325,7 +320,7 @@ def GetSquare(message, Board, WhoseTurn, Quit):
           break
       elif Square < 10:
         print("Please provide both FILE and RANK for this move")
-        Square = GetSquare(message)
+        Square = GetSquare(message, Board, WhoseTurn, Quit)
       else:
         break
     except ValueError:
@@ -334,14 +329,18 @@ def GetSquare(message, Board, WhoseTurn, Quit):
   File = Square // 10
   return File, Rank, Quit
 
-                    
 def GetMove(Board, WhoseTurn):
   #pdb.set_trace()
+  StartFile = ""
+  StartRank = ""
+  FinishFile = ""
+  FinishRank = ""
   StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
   FinishSquareMessage = "Enter coordinates of square to move piece to (file first): "
   Quit = False
   StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
-  FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
+  if not Quit:
+    FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
   return StartFile, StartRank, FinishFile, FinishRank, Quit
 
 def get_menu_solection():
@@ -381,13 +380,11 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
 def make_solection(solection, Quit):
   #pdb.set_trace()
   if solection == 1:
-    SampleGame = "N"
-    play_game(SampleGame)
+    play_game("N")
   elif solection == 2:
     load_game()
   elif solection == 3:
-    SampleGame = "Y"
-    play_game(SampleGame)
+    play_game("Y")
   elif solection == 4:
     display_high_scores
   elif solection == 5:
@@ -451,12 +448,10 @@ def play_game(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
-  moves = 0
+  moves = 1
   PlayAgain = "Y"
   while PlayAgain == "Y":
     WhoseTurn = "W"
-    if WhoseTurn == "W":
-      moves = moves + 1
     GameOver = False
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
@@ -469,7 +464,7 @@ def play_game(SampleGame):
         StartFile, StartRank, FinishFile, FinishRank, Quit = GetMove(Board, WhoseTurn)
         if (Quit):
           MoveIsLegal = True
-        elif not (Quit):
+        else:
           MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
@@ -484,22 +479,23 @@ def play_game(SampleGame):
                 MoveIsLegal = False
               else:
                 correct = False
-        if Quit:
-          GameOver = True
-          PlayAgain = "N"
+      if Quit:
+        GameOver = True
+        PlayAgain = "N"
+      else:
+        GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+        MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+        if GameOver:
+          DisplayWinner(WhoseTurn)
+          PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
+        if WhoseTurn == "W":
+          WhoseTurn = "B"
         else:
-          GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-          MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-          if GameOver:
-            DisplayWinner(WhoseTurn)
-            PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-          if WhoseTurn == "W":
-            WhoseTurn = "B"
-          else:
-            WhoseTurn = "W"
-        print()
-        if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-          PlayAgain = chr(ord(PlayAgain) - 32)
+          WhoseTurn = "W"
+          moves = moves + 1
+      print()
+      if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+        PlayAgain = chr(ord(PlayAgain) - 32)
 
 if __name__ == "__main__":
   #pdb.set_trace()
@@ -508,3 +504,4 @@ if __name__ == "__main__":
     display_menu()
     solection = get_menu_solection()
     Quit = make_solection(solection, Quit)
+
