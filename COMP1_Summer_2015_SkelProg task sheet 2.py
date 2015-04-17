@@ -10,6 +10,7 @@ yes_list = ["y", "Y", "yes", "Yes"]
 no_list = ["n", "N", "no", "No"]
 
 def CreateBoard():
+  #pdb.set_trace()
   Board = []
   for Count in range(BOARDDIMENSION + 1):
     Board.append([])
@@ -18,6 +19,7 @@ def CreateBoard():
   return Board
 
 def DisplayWhoseTurnItIs(WhoseTurn):
+  #pdb.set_trace()
   if WhoseTurn == "W":
     print("It is White's turn")
   else:
@@ -37,18 +39,21 @@ def GetTypeOfGame():
   return TypeOfGame
 
 def DisplayWinner(WhoseTurn):
+  #pdb.set_trace()
   if WhoseTurn == "W":
     print("Black's Sarrum has been captured.  White wins!")
   else:
     print("White's Sarrum has been captured.  Black wins!")
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
+  #pdb.set_trace()
   if Board[FinishRank][FinishFile][1] == "S":
     return True
   else:
     return False
 
 def display_menu():
+  #pdb.set_trace()
   print("Main Menu")
   print()
   print("1. Start new game")
@@ -60,6 +65,7 @@ def display_menu():
   print()
 
 def display_in_game_menu():
+  #pdb.set_trace()
   print("Options")
   print()
   print("1. Save Game")
@@ -69,6 +75,7 @@ def display_in_game_menu():
   print()
 
 def DisplayBoard(Board):
+  #pdb.set_trace()
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
     print("     -------------------------")
@@ -83,6 +90,7 @@ def DisplayBoard(Board):
   print()    
 
 def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, moves):
+  #pdb.set_trace()
   CheckRedumMoveIsLegal = False
   if ColourOfPiece == "W":
     if moves == 1:
@@ -97,28 +105,45 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
         elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
           CheckRedumMoveIsLegal = True
     else:
+      if FinishRank == StartRank - 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+  elif ColourOfPiece == "B":
+    if moves == 1:
+      if FinishRank == StartRank + 2:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+      elif FinishRank == StartRank + 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+    else:
+      if FinishRank == StartRank + 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+    if FinishRank == StartRank + 1:
       if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
         CheckRedumMoveIsLegal = True
-      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
         CheckRedumMoveIsLegal = True
-      if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
-        CheckRedumMoveIsLegal = True
-      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
-        CheckRedumMoveIsLegal = True
-  elif FinishRank == StartRank + 1:
-    if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
-      CheckRedumMoveIsLegal = True
-    elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
-      CheckRedumMoveIsLegal = True
   return CheckRedumMoveIsLegal
 
 def CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   CheckSarrumMoveIsLegal = False
   if abs(FinishFile - StartFile) <= 1 and abs(FinishRank - StartRank) <= 1:
     CheckSarrumMoveIsLegal = True
   return CheckSarrumMoveIsLegal
 
 def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   GisgigirMoveIsLegal = False
   RankDifference = FinishRank - StartRank
   FileDifference = FinishFile - StartFile
@@ -147,12 +172,14 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   CheckNabuMoveIsLegal = False
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     CheckNabuMoveIsLegal = True
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   CheckMarzazPaniMoveIsLegal = False
   if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1):
     CheckMarzazPaniMoveIsLegal = True
@@ -161,6 +188,7 @@ def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFi
   return CheckMarzazPaniMoveIsLegal
 
 def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   CheckEtluMoveIsLegal = False
   if (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 1) or (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2):
     CheckEtluMoveIsLegal = True
@@ -169,6 +197,7 @@ def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   return CheckEtluMoveIsLegal
 
 def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves):
+  #pdb.set_trace()
   MoveIsLegal = True
   if FinishRank == 0:
     MoveIsLegal = False
@@ -210,6 +239,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
   return MoveIsLegal
 
 #def load_game():
+# pdb.set_trace()
 #  try:
 #    with open("saved_game.dat", mode="rb") as SavedGame:
 #      Board = SavedGame
@@ -220,6 +250,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 #    print()
     
 #def save_game(Board):
+# pdb.set_trace()
 #  with open("saved_game.dat", mode="wb") as SavedGame:
 #    for line in Board:
 #      for count in line:
@@ -227,6 +258,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 #      SavedGame.write("/n")
 
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
+  #pdb.set_trace()
   print()
   print("Move form Rank {0}, File {1} to Rank {0}, File {0}".format(StartRank, StartFile, FinishRank, FinishFile))
   confirm_move = input("Confirm move (yes/no): ")
@@ -234,25 +266,28 @@ def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   return confirm_move
 
 def InitialiseBoard(Board, SampleGame):
+  #pdb.set_trace()
   if SampleGame == "Y":
     InitialiseSampleBoard(Board)
   else:
     InitialiseNewBoard(Board)
 
 def InitialiseSampleBoard(Board):
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):
-        Board[RankNo][FileNo] = "  "
-    Board[1][2] = "BG"
-    Board[1][4] = "BS"
-    Board[1][8] = "WG"
-    Board[2][1] = "WR"
-    Board[3][1] = "WS"
-    Board[3][2] = "BE"
-    Board[3][8] = "BE"
-    Board[6][8] = "BR"
+  #pdb.set_trace()
+  for RankNo in range(1, BOARDDIMENSION + 1):
+    for FileNo in range(1, BOARDDIMENSION + 1):
+      Board[RankNo][FileNo] = "  "
+  Board[1][2] = "BG"
+  Board[1][4] = "BS"
+  Board[1][8] = "WG"
+  Board[2][1] = "WR"
+  Board[3][1] = "WS"
+  Board[3][2] = "BE"
+  Board[3][8] = "BE"
+  Board[6][8] = "BR"
 
 def InitialiseNewBoard(Board):
+  #pdb.set_trace()
   for RankNo in range(1, BOARDDIMENSION + 1):
     for FileNo in range(1, BOARDDIMENSION + 1):
       if RankNo == 2:
@@ -275,32 +310,42 @@ def InitialiseNewBoard(Board):
         elif FileNo == 5:
           Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
       else:
-        Board[RankNo][FileNo] = "  "    
-                    
-def GetMove(StartSquare, FinishSquare, Board, WhoseTurn):
-  Quit = False
-  try:
-    StartSquare = int(input("Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "))
-  except ValueError:
-    print("That is not coordinates - please try again")
-  if StartSquare == -1:
-    display_in_game_menu()
-    solection = get_menu_solection()
-    Quit = make_in_game_solection(solection, Board, WhoseTurn)
-  elif StartSquare < 10:
-    print("Please provide both FILE and RANK for this move")
-    StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
-  else:
+        Board[RankNo][FileNo] = "  "
+
+def GetSquare(message, Board, WhoseTurn, Quit):
+  #pdb.set_trace()
+  while True:
     try:
-      FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
+      Square = int(input(message))
+      if Square == -1:
+        display_in_game_menu()
+        solection = get_menu_solection()
+        Quit = make_in_game_solection(solection, Board, WhoseTurn)
+        if Quit:
+          break
+      elif Square < 10:
+        print("Please provide both FILE and RANK for this move")
+        Square = GetSquare(message)
+      else:
+        break
     except ValueError:
       print("That is not coordinates - please try again")
-    if FinishSquare < 10:
-      print("Please provide both FILE and RANK for this move")
-      StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
-  return StartSquare, FinishSquare, Quit
+  Rank = Square % 10
+  File = Square // 10
+  return File, Rank, Quit
+
+                    
+def GetMove(Board, WhoseTurn):
+  #pdb.set_trace()
+  StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
+  FinishSquareMessage = "Enter coordinates of square to move piece to (file first): "
+  Quit = False
+  StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
+  FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
+  return StartFile, StartRank, FinishFile, FinishRank, Quit
 
 def get_menu_solection():
+  #pdb.set_trace()
   try:
     solection = int(input("Please select an option: "))
   except ValueError:
@@ -309,6 +354,7 @@ def get_menu_solection():
   return solection
 
 def make_in_game_solection(solection, Borad, WhoseTurn):
+  #pdb.set_trace()
   if solection == 1:
     save_game(Borad)
     Quit = make_in_game_solection(solection, Borad)
@@ -333,6 +379,7 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
   return Quit
 
 def make_solection(solection, Quit):
+  #pdb.set_trace()
   if solection == 1:
     SampleGame = "N"
     play_game(SampleGame)
@@ -354,6 +401,7 @@ def make_solection(solection, Quit):
   return Quit
 
 def GetPieceName(FinishRank, FinishFile, Board):
+  #pdb.set_trace()
   Pieces = True
   PiecesColour = ""
   PiecesType = ""
@@ -378,6 +426,7 @@ def GetPieceName(FinishRank, FinishFile, Board):
   return Pieces, PiecesColour, PiecesType
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
+  #pdb.set_trace()
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
@@ -398,6 +447,7 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
       Board[StartRank][StartFile] = "  "
 
 def play_game(SampleGame):
+  #pdb.set_trace()
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
@@ -416,14 +466,10 @@ def play_game(SampleGame):
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
-        StartSquare, FinishSquare, Quit = GetMove(StartSquare, FinishSquare, Board, WhoseTurn)
+        StartFile, StartRank, FinishFile, FinishRank, Quit = GetMove(Board, WhoseTurn)
         if (Quit):
           MoveIsLegal = True
         elif not (Quit):
-          StartRank = StartSquare % 10
-          StartFile = StartSquare // 10
-          FinishRank = FinishSquare % 10
-          FinishFile = FinishSquare // 10
           MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
@@ -456,6 +502,7 @@ def play_game(SampleGame):
           PlayAgain = chr(ord(PlayAgain) - 32)
 
 if __name__ == "__main__":
+  #pdb.set_trace()
   Quit = False
   while not Quit:
     display_menu()
