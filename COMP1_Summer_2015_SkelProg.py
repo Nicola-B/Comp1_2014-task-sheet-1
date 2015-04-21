@@ -69,7 +69,9 @@ def DisplayBoard(Board):
     print("|")
   print("     -------------------------")
   print()
-  print("      F1  F2  F3  F4  F5  F6  F7  F8")
+  print("      ", end="")
+  for FileNo in range(1, BOARDDIMENSION + 1):
+    print("F{0} ".format(FileNo), end="")
   print()
   print()    
 
@@ -184,7 +186,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   print()
-  print("Move form Rank {0}, File {1} to Rank {0}, File {0}".format(StartRank, StartFile, FinishRank, FinishFile))
+  print("Move form Rank {0}, File {1} to Rank {2}, File {3}".format(StartRank, StartFile, FinishRank, FinishFile))
   confirm_move = input("Confirm move (yes/no): ")
   print()
   return confirm_move
@@ -307,16 +309,15 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     print("Black Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "BM"
     Board[StartRank][StartFile] = "  "
+  Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+  if not Pieces:
+    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+    Board[StartRank][StartFile] = "  "
   else:
-    Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-    if not Pieces:
-      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-      Board[StartRank][StartFile] = "  "
-    else:
-      Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-      print("{0} {1} takes {2} {3}.".format(PiecesColour1, PiecesType1, PiecesColour2, PiecesType2))
-      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-      Board[StartRank][StartFile] = "  "
+    Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
+    print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
+    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+    Board[StartRank][StartFile] = "  "
 
 def play_game(SampleGame):
   Board = CreateBoard() #0th index not used

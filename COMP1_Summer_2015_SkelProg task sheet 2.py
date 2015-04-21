@@ -85,9 +85,11 @@ def DisplayBoard(Board):
     print("|")
   print("     -------------------------")
   print()
-  print("      F1 F2 F3 F4 F5 F6 F7 F8")
+  print("      ", end="")
+  for FileNo in range(1, BOARDDIMENSION + 1):
+    print("F{0} ".format(FileNo), end="")
   print()
-  print()    
+  print()
 
 def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, moves):
   #pdb.set_trace()
@@ -424,6 +426,10 @@ def GetPieceName(FinishRank, FinishFile, Board):
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
+  Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+  if Pieces:
+    Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
+    print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
@@ -433,15 +439,8 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     Board[FinishRank][FinishFile] = "BM"
     Board[StartRank][StartFile] = "  "
   else:
-    Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-    if not Pieces:
-      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-      Board[StartRank][StartFile] = "  "
-    else:
-      Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-      print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
-      Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-      Board[StartRank][StartFile] = "  "
+    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+    Board[StartRank][StartFile] = "  "
 
 def play_game(SampleGame):
   #pdb.set_trace()
