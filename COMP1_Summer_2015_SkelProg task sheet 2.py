@@ -91,11 +91,11 @@ def DisplayBoard(Board):
   print()
   print()
 
-def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, moves):
+def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece):
   #pdb.set_trace()
   CheckRedumMoveIsLegal = False
   if ColourOfPiece == "W":
-    if moves == 1:
+    if StartRank == BOARDDIMENSION - 1:
       if FinishRank == StartRank - 2:
         if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
           CheckRedumMoveIsLegal = True
@@ -113,7 +113,7 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
         elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
           CheckRedumMoveIsLegal = True
   elif ColourOfPiece == "B":
-    if moves == 1:
+    if StartRank == 2:
       if FinishRank == StartRank + 2:
         if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
           CheckRedumMoveIsLegal = True
@@ -178,7 +178,12 @@ def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   #pdb.set_trace()
   CheckNabuMoveIsLegal = False
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
-    CheckNabuMoveIsLegal = True
+    for SquareNo in range(FinishFile - StartFile):
+      Square = Bard[SquareNo][SquareNo]
+      if Square == "":
+        CheckNabuMoveIsLegal = True
+      else:
+        CheckNabuMoveIsLegal = False
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -199,7 +204,7 @@ def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
     CheckEtluMoveIsLegal = True
   return CheckEtluMoveIsLegal
 
-def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves):
+def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
   MoveIsLegal = True
   if FinishRank == 0:
@@ -228,7 +233,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
           MoveIsLegal = False
     if MoveIsLegal == True:
       if PieceType == "R":
-        MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour, moves)
+        MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour)
       elif PieceType == "S":
         MoveIsLegal = CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
       elif PieceType == "M":
@@ -317,7 +322,8 @@ def InitialiseNewBoard(Board):
 
 def GetSquare(message, Board, WhoseTurn, Quit):
   #pdb.set_trace()
-  while True:
+  Check = False
+  while not Check:
     try:
       Square = int(input(message))
       if Square == -1:
@@ -325,13 +331,13 @@ def GetSquare(message, Board, WhoseTurn, Quit):
         solection = get_menu_solection()
         Quit = make_in_game_solection(solection, Board, WhoseTurn)
         if Quit:
-          break
+          Check = True
       elif Square < 10:
         print("Please provide both FILE and RANK for this move")
         Square = GetSquare(message, Board, WhoseTurn, Quit)
         Square = GetSquare(message, Board, WhoseTurn, Quit)
       else:
-        break
+        Check = True
     except ValueError:
       print("That is not coordinates - please try again")
   Rank = Square % 10
@@ -340,24 +346,15 @@ def GetSquare(message, Board, WhoseTurn, Quit):
 
 def GetMove(Board, WhoseTurn):
   #pdb.set_trace()
-  StartFile = ""
-  StartRank = ""
-  FinishFile = ""
-  FinishRank = ""
   StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
   FinishSquareMessage = "Enter coordinates of square to move piece to (file first): "
   Quit = False
   StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
   if not Quit:
     FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
-                    
-def GetMove(Board, WhoseTurn):
-  #pdb.set_trace()
-  StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
-  FinishSquareMessage = "Enter coordinates of square to move piece to (file first): "
-  Quit = False
-  StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
-  FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
+  else:
+    FinishFile = ""
+    FinishRank = ""
   return StartFile, StartRank, FinishFile, FinishRank, Quit
 
 def get_menu_solection():
@@ -416,15 +413,7 @@ def make_solection(solection, Quit):
 
 def GetPieceName(FinishRank, FinishFile, Board):
   #pdb.set_trace()
-  Pieces = True
-  PiecesColour = ""
   PiecesType = ""
-  if Board[FinishRank][FinishFile][0] == "w":
-    PiecesColour = "White"
-  elif Board[FinishRank][FinishFile][0] == "B":
-    PiecesColour = "Black"
-  else:
-    Pieces = False
   if Board[FinishRank][FinishFile][1] == "G":
     PiecesType = "Gisgigir"
   elif Board[FinishRank][FinishFile][1] == "E":
@@ -437,14 +426,20 @@ def GetPieceName(FinishRank, FinishFile, Board):
     PiecesType = "Sarrum"
   elif Board[FinishRank][FinishFile][1] == "M":
     PiecesType = "Marzaz pani"
-  return Pieces, PiecesColour, PiecesType
+  return PiecesType
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
-  Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-  if Pieces:
-    Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-    print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
+  PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+  if Board[FinishRank][FinishFile] != "":
+    if WhoseTurn == "W":
+      PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+      PiecesType2 = GetPieceName(StartRank, StartFile, Board)
+      print("White {0} takes Black {1}.".format(PiecesType2, PiecesType1))
+    else:
+      PiecesType1 = GetPieceName(StartRank, StartFile, Board)
+      PiecesType2 = GetPieceName(FinishRank, FinishFile, Board)
+      print("Black {0} takes White {1}.".format(PiecesType2, PiecesType1))
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
@@ -462,7 +457,6 @@ def play_game(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
-  moves = 1
   PlayAgain = "Y"
   while PlayAgain == "Y":
     WhoseTurn = "W"
@@ -479,7 +473,7 @@ def play_game(SampleGame):
         if (Quit):
           MoveIsLegal = True
         elif not (Quit):
-          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves)
+          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
           else:
@@ -506,7 +500,6 @@ def play_game(SampleGame):
           WhoseTurn = "B"
         else:
           WhoseTurn = "W"
-          moves = moves + 1
       print()
       if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
         PlayAgain = chr(ord(PlayAgain) - 32)
