@@ -130,14 +130,12 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
           CheckRedumMoveIsLegal = True
         elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
           CheckRedumMoveIsLegal = True
-<<<<<<< HEAD
-=======
+
     if FinishRank == StartRank + 1:
       if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
         CheckRedumMoveIsLegal = True
       elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
         CheckRedumMoveIsLegal = True
->>>>>>> branch 'master' of https://github.com/Nicola-B/Comp1_2014-task-sheet-1.git
   return CheckRedumMoveIsLegal
 
 def CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -330,11 +328,8 @@ def GetSquare(message, Board, WhoseTurn, Quit):
           break
       elif Square < 10:
         print("Please provide both FILE and RANK for this move")
-<<<<<<< HEAD
         Square = GetSquare(message, Board, WhoseTurn, Quit)
-=======
-        Square = GetSquare(message)
->>>>>>> branch 'master' of https://github.com/Nicola-B/Comp1_2014-task-sheet-1.git
+        Square = GetSquare(message, Board, WhoseTurn, Quit)
       else:
         break
     except ValueError:
@@ -343,7 +338,6 @@ def GetSquare(message, Board, WhoseTurn, Quit):
   File = Square // 10
   return File, Rank, Quit
 
-<<<<<<< HEAD
 def GetMove(Board, WhoseTurn):
   #pdb.set_trace()
   StartFile = ""
@@ -356,7 +350,6 @@ def GetMove(Board, WhoseTurn):
   StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
   if not Quit:
     FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
-=======
                     
 def GetMove(Board, WhoseTurn):
   #pdb.set_trace()
@@ -365,7 +358,6 @@ def GetMove(Board, WhoseTurn):
   Quit = False
   StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
   FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
->>>>>>> branch 'master' of https://github.com/Nicola-B/Comp1_2014-task-sheet-1.git
   return StartFile, StartRank, FinishFile, FinishRank, Quit
 
 def get_menu_solection():
@@ -449,13 +441,10 @@ def GetPieceName(FinishRank, FinishFile, Board):
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
-<<<<<<< HEAD
   Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
   if Pieces:
     Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
     print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
-=======
->>>>>>> branch 'master' of https://github.com/Nicola-B/Comp1_2014-task-sheet-1.git
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
@@ -489,11 +478,7 @@ def play_game(SampleGame):
         StartFile, StartRank, FinishFile, FinishRank, Quit = GetMove(Board, WhoseTurn)
         if (Quit):
           MoveIsLegal = True
-<<<<<<< HEAD
-        else:
-=======
         elif not (Quit):
->>>>>>> branch 'master' of https://github.com/Nicola-B/Comp1_2014-task-sheet-1.git
           MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, moves)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
