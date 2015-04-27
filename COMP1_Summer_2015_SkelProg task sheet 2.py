@@ -175,22 +175,62 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
-  #pdb.set_trace()
+  pdb.set_trace()
   CheckNabuMoveIsLegal = False
+  SquareNo = 1
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
-    for SquareNo in range(FinishFile - StartFile):
-      Square = Bard[SquareNo][SquareNo]
-      if Square == "":
+    if FinishFile < StartFile and FinishRank < StartRank:
+      for SquareNo in range(abs(FinishFile - StartFile)):
         CheckNabuMoveIsLegal = True
-      else:
-        CheckNabuMoveIsLegal = False
+        if not CheckNabuMoveIsLegal:
+          Square = Board[SquareNo][SquareNo]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            CheckNabuMoveIsLegal = True
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+    elif FinishFile < StartFile and FinishRank > StartRank:
+      for SquareNo in range(abs(FinishFile - StartFile)):
+        CheckNabuMoveIsLegal = True
+        if not CheckNabuMoveIsLegal:
+          Square = Board[SquareNo][SquareNo]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            CheckNabuMoveIsLegal = True
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+    elif FinishFile > StartFile and FinishRank > StartRank:
+      for SquareNo in range(abs(FinishFile - StartFile)):
+        CheckNabuMoveIsLegal = True
+        if not CheckNabuMoveIsLegal:
+          Square = Board[SquareNo][SquareNo]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            CheckNabuMoveIsLegal = True
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+    elif FinishFile > StartFile and FinishRank < StartRank:
+      for SquareNo in range(abs(FinishFile - StartFile)):
+        CheckNabuMoveIsLegal = True
+        if not CheckNabuMoveIsLegal:
+          Square = Board[SquareNo][SquareNo]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            CheckNabuMoveIsLegal = True
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   #pdb.set_trace()
   CheckMarzazPaniMoveIsLegal = False
   if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1):
-    CheckMarzazPaniMoveIsLegal = True
+    CheckMarzaz
+    PaniMoveIsLegal = True
   elif abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1:
     CheckMarzazPaniMoveIsLegal = True
   return CheckMarzazPaniMoveIsLegal
@@ -430,7 +470,6 @@ def GetPieceName(FinishRank, FinishFile, Board):
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
-  PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
   if Board[FinishRank][FinishFile] != "":
     if WhoseTurn == "W":
       PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)

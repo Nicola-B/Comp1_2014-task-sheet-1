@@ -48,17 +48,6 @@ def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
   else:
     return False
 
-def display_menu():
-  print("Main Menu")
-  print()
-  print("1. Start new game")
-  print("2. Load ezistin game")
-  print("3. Play sample game")
-  print("4. View high scores")
-  print("5. Settings")
-  print("6. Quit program")
-  print()
-
 def DisplayBoard(Board):
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
@@ -247,45 +236,8 @@ def GetMove(StartSquare, FinishSquare):
       StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
   return StartSquare, FinishSquare
 
-def get_menu_solection():
-  try:
-    solection = int(input("Please select an option: "))
-  except ValueError:
-    print("Please enter a number.")
-    solection = get_menu_solection()
-  return solection
-
-def make_solection(solection, Quit):
-  if solection == 1:
-    SampleGame = "N"
-    play_game(SampleGame)
-  elif solection == 2:
-    load_game()
-  elif solection == 3:
-    SampleGame = "Y"
-    play_game(SampleGame)
-  elif solection == 4:
-    display_high_scores
-  elif solection == 5:
-    settings
-  elif solection == 6:
-    Quit = True
-  else:
-    print("please make a valid solection")
-    solection = get_menu_solection()
-    make_solection(solection)
-  return Quit
-
 def GetPieceName(FinishRank, FinishFile, Board):
-  Pieces = True
-  PiecesColour = ""
   PiecesType = ""
-  if Board[FinishRank][FinishFile][0] == "w":
-    PiecesColour = "White"
-  elif Board[FinishRank][FinishFile][0] == "B":
-    PiecesColour = "Black"
-  else:
-    Pieces = False
   if Board[FinishRank][FinishFile][1] == "G":
     PiecesType = "Gisgigir"
   elif Board[FinishRank][FinishFile][1] == "E":
@@ -298,9 +250,18 @@ def GetPieceName(FinishRank, FinishFile, Board):
     PiecesType = "Sarrum"
   elif Board[FinishRank][FinishFile][1] == "M":
     PiecesType = "Marzaz pani"
-  return Pieces, PiecesColour, PiecesType
+  return PiecesType
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
+  if Board[FinishRank][FinishFile] != "":
+    if WhoseTurn == "W":
+      PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
+      PiecesType2 = GetPieceName(StartRank, StartFile, Board)
+      print("White {0} takes Black {1}.".format(PiecesType2, PiecesType1))
+    else:
+      PiecesType1 = GetPieceName(StartRank, StartFile, Board)
+      PiecesType2 = GetPieceName(FinishRank, FinishFile, Board)
+      print("Black {0} takes White {1}.".format(PiecesType2, PiecesType1))
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     print("White Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "WM"
@@ -309,17 +270,11 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     print("Black Redum promoted to Marzaz Pani.")
     Board[FinishRank][FinishFile] = "BM"
     Board[StartRank][StartFile] = "  "
-  Pieces, PiecesColour1, PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-  if not Pieces:
-    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
-    Board[StartRank][StartFile] = "  "
   else:
-    Pieces, PiecesColour2, PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-    print("{0} {1} takes {2} {3}.".format(PiecesColour2, PiecesType2, PiecesColour1, PiecesType1))
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
 
-def play_game(SampleGame):
+if __name__ == "__main__":
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
@@ -327,6 +282,15 @@ def play_game(SampleGame):
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
+    SampleGame = ""
+    while SampleGame not in yes_list and SampleGame not in no_list:
+      SampleGame = input("Do you want to play the sample game (enter Y for Yes)? ")
+      if SampleGame not in yes_list and SampleGame not in no_list:
+        print("Please enter a valid carictor")
+    if SampleGame in yes_list:
+      SampleGame = "Y"
+    else:
+      SampleGame = "N"
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
     InitialiseBoard(Board, SampleGame)
@@ -364,12 +328,5 @@ def play_game(SampleGame):
         WhoseTurn = "W"
     PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
     if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-      PlayAgain = chr(ord(PlayAgain) - 32)
-
-if __name__ == "__main__":
-  Quit = False
-  while not Quit:
-    display_menu()
-    solection = get_menu_solection()
-    Quit = make_solection(solection, Quit)
+      PlayAgain = chr(ord(PlayAgain) - 32)  
   

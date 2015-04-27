@@ -175,24 +175,21 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
-  pdb.set_trace()
-  CheckNabuMoveIsLegal = True
+  #pdb.set_trace()
+  CheckNabuMoveIsLegal = False
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
-    SquareNo = 1
-    while CheckNabuMoveIsLegal and SquareNo <= FinishFile - 1:
-      if WhoseTurn == "W":        
-        Square = Board[StartRank - SquareNo][SquareNo - SquareNo]
-        if Square == "":
-          CheckNabuMoveIsLegal = True
-          SquareNo = SquareNo + 1
-        else:
-          CheckNabuMoveIsLegal = False
-      elif WhoseTurn == "B":
-        Square = Board[StartRank + SquareNo][SquareNo + SquareNo]
-        if Square == "":
-          CheckNabuMoveIsLegal = True
-        else:
-          CheckNabuMoveIsLegal = False
+    SquareNo = 0
+    if FinishFiles > StartFile and FinishRank > StartRank:      
+      while SquareNo <= FinishFile - 1:
+        if WhoseTurn == "W":        
+          Square = Board[StartRank - SquareNo][SquareNo - SquareNo]
+          if Square == "":
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+        elif WhoseTurn == "B":
+          Square = Board[StartRank + SquareNo][SquareNo + SquareNo]
+          if Square == "":
+            CheckNabuMoveIsLegal = False
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
