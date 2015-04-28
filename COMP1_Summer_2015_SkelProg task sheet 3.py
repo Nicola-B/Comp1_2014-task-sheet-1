@@ -42,8 +42,10 @@ def DisplayWinner(WhoseTurn):
   #pdb.set_trace()
   if WhoseTurn == "W":
     print("Black's Sarrum has been captured.  White wins!")
+    print()
   else:
     print("White's Sarrum has been captured.  Black wins!")
+    print()
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
   #pdb.set_trace()
@@ -130,7 +132,6 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
           CheckRedumMoveIsLegal = True
         elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
           CheckRedumMoveIsLegal = True
-
     if FinishRank == StartRank + 1:
       if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
         CheckRedumMoveIsLegal = True
@@ -176,20 +177,62 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   #pdb.set_trace()
-  CheckNabuMoveIsLegal = False
+  CheckNabuMoveIsLegal = True
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
-    SquareNo = 0
-    if FinishFiles > StartFile and FinishRank > StartRank:      
-      while SquareNo <= FinishFile - 1:
-        if WhoseTurn == "W":        
-          Square = Board[StartRank - SquareNo][SquareNo - SquareNo]
-          if Square == "":
+    Rank = StartRank
+    File = StartFile
+    if FinishFile < StartFile and FinishRank < StartRank:
+      Rank = Rank - 1
+      File = File - 1
+      for SquareNo in range(abs(FinishFile - StartFile) - 1):
+        if CheckNabuMoveIsLegal:
+          Square = Board[Rank][File]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            Rank = Rank - 1
+            File = File - 1
+          else:
             CheckNabuMoveIsLegal = False
             SquareNo = SquareNo + 1
-        elif WhoseTurn == "B":
-          Square = Board[StartRank + SquareNo][SquareNo + SquareNo]
-          if Square == "":
+    elif FinishFile < StartFile and FinishRank > StartRank:
+      Rank = Rank + 1
+      File = File - 1
+      for SquareNo in range(abs(FinishFile - StartFile) - 1):
+        if CheckNabuMoveIsLegal:
+          Square = Board[Rank][File]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            Rank = Rank + 1
+            File = File - 1
+          else:
             CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+    elif FinishFile > StartFile and FinishRank > StartRank:
+      Rank = Rank + 1
+      File = File + 1
+      for SquareNo in range(abs(FinishFile - StartFile) - 1):
+        if CheckNabuMoveIsLegal:
+          Square = Board[Rank][File]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            Rank = Rank + 1
+            File = File + 1
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
+    elif FinishFile > StartFile and FinishRank < StartRank:
+      Rank = Rank - 1
+      File = File + 1
+      for SquareNo in range(abs(FinishFile - StartFile) - 1):
+        if CheckNabuMoveIsLegal:
+          Square = Board[Rank][File]
+          if Square == "  ":
+            SquareNo = SquareNo + 1
+            Rank = Rank - 1
+            File = File + 1
+          else:
+            CheckNabuMoveIsLegal = False
+            SquareNo = SquareNo + 1
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -444,7 +487,7 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
     print("Surrendering...")
     print()
     if WhoseTurn == "W":
-      print("White surrendered. Black wins!")
+      print("White surrendered. Black wins!")  
     else:
       print("Black surrendered. White wins!")
     print()
@@ -500,26 +543,32 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Set
       PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
       PiecesType2 = GetPieceName(StartRank, StartFile, Board)
       print("White {0} takes Black {1}.".format(PiecesType2, PiecesType1))
+      print()
     else:
       PiecesType1 = GetPieceName(StartRank, StartFile, Board)
       PiecesType2 = GetPieceName(FinishRank, FinishFile, Board)
       print("Black {0} takes White {1}.".format(PiecesType2, PiecesType1))
+      print()
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     if not Setting:
       print("White Redum promoted to Marzaz Pani.")
+      print()
       Board[FinishRank][FinishFile] = "WM"
       Board[StartRank][StartFile] = "  "
     else:
       print("White Redum promoted to Kashshaptu.")
+      print()
       Board[FinishRank][FinishFile] = "WK"
       Board[StartRank][StartFile] = "  "
   elif WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
     if not Setting:
       print("Black Redum promoted to Marzaz Pani.")
+      print()
       Board[FinishRank][FinishFile] = "BM"
       Board[StartRank][StartFile] = "  "
     else:
       print("Black Redum promoted to Kashshaptu.")
+      print()
       Board[FinishRank][FinishFile] = "BK"
       Board[StartRank][StartFile] = "  "
   else:
