@@ -176,7 +176,7 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
-  #pdb.set_trace()
+  pdb.set_trace()
   CheckNabuMoveIsLegal = True
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     Rank = StartRank
@@ -233,6 +233,8 @@ def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, Wh
           else:
             CheckNabuMoveIsLegal = False
             SquareNo = SquareNo + 1
+  else:
+    CheckNabuMoveIsLegal = False
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -331,31 +333,32 @@ def DisplaySettings():
   print("9.Return to Main Menu")
   print()
 
-def GetSttingChange():
+def GetSettingChange():
   #pdb.set_trace()
   try:
-    Solection = int(input("Please select setting to change: "))
+    Selection = int(input("Please select setting to change: "))
   except ValueError:
     print("Please enter a number.")
-    Solection = GetSettingChange()
-  return solection
+    Selection = GetSettingChange()
+  return Selection
 
 def MakeSettingChange(Selection, Setting, Quit):
+  #pdb.set_trace()
   if Selection == 1:
     Correct = False
     while not Correct:
       Confomation = input("Do you wish to use the Kashshaptu piece (Y/N)?: ")
       if Confomation in yes_list:
-        Settings = True
+        Setting = True
         Correct = True
       elif Confomation in no_list:
-        Settings = False
+        Setting = False
         Correct = True
       else:
         print("Plese enter yes or no!")
-  elif Selsction == 9:
+  elif Selection == 9:
     Quit = True
-  return Settings, Quit
+  return Setting, Quit
 
 def Settings(Setting):
   #pdb.set_trace()
@@ -538,16 +541,16 @@ def GetPieceName(FinishRank, FinishFile, Board):
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Setting):
   #pdb.set_trace()
   PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-  if Board[FinishRank][FinishFile] != "":
+  if Board[FinishRank][FinishFile] != "  ":
     if WhoseTurn == "W":
-      PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
-      PiecesType2 = GetPieceName(StartRank, StartFile, Board)
-      print("White {0} takes Black {1}.".format(PiecesType2, PiecesType1))
+      PiecesType1 = GetPieceName(StartRank, StartFile, Board)
+      PiecesType2 = GetPieceName(FinishRank, FinishFile, Board)
+      print("White {0} takes Black {1}.".format(PiecesType1, PiecesType2))
       print()
     else:
       PiecesType1 = GetPieceName(StartRank, StartFile, Board)
       PiecesType2 = GetPieceName(FinishRank, FinishFile, Board)
-      print("Black {0} takes White {1}.".format(PiecesType2, PiecesType1))
+      print("Black {0} takes White {1}.".format(PiecesType1, PiecesType2))
       print()
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     if not Setting:
