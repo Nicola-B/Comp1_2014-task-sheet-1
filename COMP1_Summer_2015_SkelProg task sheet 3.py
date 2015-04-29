@@ -6,6 +6,7 @@
 #29/04/2015
 
 import pdb
+from datetime import*
 BOARDDIMENSION = 8
 yes_list = ["y", "Y", "yes", "Yes"]
 no_list = ["n", "N", "no", "No"]
@@ -325,7 +326,22 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 #    print()
 #   print("There is no saved game")
 #    print()
-    
+
+def save_high_scores(Scores):
+  #pdb.set_trace()
+  with open("saved_scores.dat", mode="wb") as SavedScores:
+    for score in Scores:
+      score_date = score.Date
+      score_date_string = datetime.strftime(score_date, "%d/%m/%Y")
+      SavedGame.write(score.Name)
+      SavedGame.write("/n")
+      SavedGame.write(score.Colour)
+      SavedGame.write("/n")
+      SavedGame.write(score.Score)
+      SavedGame.write("/n")
+      SavedGame.write(score_date_string)
+      SavedGame.write("/n")
+
 #def save_game(Board):
 # pdb.set_trace()
 #  with open("saved_game.dat", mode="wb") as SavedGame:
@@ -335,17 +351,21 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 #      SavedGame.write("/n")
 
 def display_high_scores(Scores):
+  #pdb.set_trace()
   print()
   print("High Scores")
   print()
   if Scores == []:
     print("There are no scores")
+    print()
   else:
     print("-"*48)
     print("|{0:<12}|{1:<6}|{2:<15}|{3:<10}|".format("Name", "Colour", "Number of Moves", "Date"))
-    print("-"*)
+    print("-"*48)
     for score in Scores:
-      print("|{0:<12}|{1:<6}|{2:<15}|{3:<10}|".format(score.Name, score.Colour, score.Score, score.Date))
+      score_date = score.Date
+      score_date_string = datetime.strftime(score_date, "%d/%m/%Y")
+      print("|{0:<12}|{1:<6}|{2:<15}|{3:<10}|".format(score.Name, score.Colour, score.Score, score_date_string))
       print("-"*48)
 
 def DisplaySettings():
@@ -477,11 +497,26 @@ def GetSquare(message, Board, WhoseTurn, Quit):
   return File, Rank, Quit
 
 def GetName():
-  
+  print()
+  Right = False
+  while not Right:
+    Chose = input("Do you want your name and score in the high scores table (Y or N): ")
+    print()
+    if (Chose not in yes_list) and (Chose not in no_list):
+      print("This is not valid. Try again")
+      print()
+    else:
+      Right = True
+  if Chose in yes_list:
+    Name = input("Please input your name here and it will be added to the high scores table: ")
+    print()
+  else:
+    Name = "-1"
+  return Name
 
 def GetScores(Scores, WhoseTurn, Moves):
   #pdb.set_trace()
-  score = ScoreRecored()
+  score = ScoreRecord()
   Name = GetName()
   if Name != "-1":
     Colour = WhoseTurn
