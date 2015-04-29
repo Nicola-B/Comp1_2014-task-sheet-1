@@ -3,6 +3,7 @@
 # written by the AQA COMP1 Programmer Team
 # developed in the Python 3.4 programming environment
 # Nicola Batty
+#29/04/2015
 
 import pdb
 BOARDDIMENSION = 8
@@ -337,7 +338,7 @@ def display_high_scores(Scores):
   print()
   print("High Scores")
   print()
-  if Scores = []:
+  if Scores == []:
     print("There are no scores")
   else:
     print("-"*48)
