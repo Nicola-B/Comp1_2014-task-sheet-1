@@ -9,6 +9,13 @@ BOARDDIMENSION = 8
 yes_list = ["y", "Y", "yes", "Yes"]
 no_list = ["n", "N", "no", "No"]
 
+class ScoreRecord:
+  def __into__(self):
+    self.Name = None
+    self.Colour = None
+    self.Score = None
+    self.Date = datetime.now()
+
 def CreateBoard():
   #pdb.set_trace()
   Board = []
@@ -38,13 +45,13 @@ def GetTypeOfGame():
     TypeOfGame = GetTypeOfGame()
   return TypeOfGame
 
-def DisplayWinner(WhoseTurn):
+def DisplayWinner(WhoseTurn, Moves):
   #pdb.set_trace()
   if WhoseTurn == "W":
-    print("Black's Sarrum has been captured.  White wins!")
+    print("Black's Sarrum has been captured in {0} moves.  White wins!".format(Moves))
     print()
   else:
-    print("White's Sarrum has been captured.  Black wins!")
+    print("White's Sarrum has been captured in {0} moves.  Black wins!".format(Moves))
     print()
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
@@ -326,6 +333,20 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 #        SavedGame.write(count)
 #      SavedGame.write("/n")
 
+def display_high_scores(Scores):
+  print()
+  print("High Scores")
+  print()
+  if Scores = []:
+    print("There are no scores")
+  else:
+    print("-"*48)
+    print("|{0:<12}|{1:<6}|{2:<15}|{3:<10}|".format("Name", "Colour", "Number of Moves", "Date"))
+    print("-"*)
+    for score in Scores:
+      print("|{0:<12}|{1:<6}|{2:<15}|{3:<10}|".format(score.Name, score.Colour, score.Score, score.Date))
+      print("-"*48)
+
 def DisplaySettings():
   #pdb.set_trace()
   print()
@@ -454,6 +475,24 @@ def GetSquare(message, Board, WhoseTurn, Quit):
   File = Square // 10
   return File, Rank, Quit
 
+def GetName():
+  
+
+def GetScores(Scores, WhoseTurn, Moves):
+  #pdb.set_trace()
+  score = ScoreRecored()
+  Name = GetName()
+  if Name != "-1":
+    Colour = WhoseTurn
+    Score = Moves
+    Date = datetime.now()
+    score.Name = Name
+    score.Colour = Colour
+    score.Score = Score
+    score.Date = Date
+    Scores.append(score)
+  return Scores
+
 def GetMove(Board, WhoseTurn):
   #pdb.set_trace()
   StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
@@ -501,25 +540,23 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
     Quit = make_in_game_solection(solection, Borad, WhoseTurn)
   return Quit
 
-def make_solection(solection, Quit, Setting):
+def make_solection(solection, Quit, Setting, Scores):
   #pdb.set_trace()
   if solection == 1:
-    play_game("N", Setting)
+    play_game("N", Setting, Scores)
   elif solection == 2:
     load_game()
   elif solection == 3:
-    play_game("Y", Setting)
+    play_game("Y", Setting, Scores)
   elif solection == 4:
-    display_high_scores
+    display_high_scores(Scores)
   elif solection == 5:
     Setting = Settings(Setting)
   elif solection == 6:
     Quit = True
   else:
     print("please make a valid solection")
-    solection = get_menu_solection()
-    Quit = make_solection(solection, Quit)
-  return Quit, Setting
+  return Quit, Setting, Scores
 
 def GetPieceName(FinishRank, FinishFile, Board):
   #pdb.set_trace()
@@ -578,13 +615,14 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Set
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
 
-def play_game(SampleGame, Setting):
+def play_game(SampleGame, Setting, Scores):
   #pdb.set_trace()
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
   PlayAgain = "Y"
   while PlayAgain == "Y":
+    Moves = 1
     WhoseTurn = "W"
     GameOver = False
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
@@ -620,22 +658,26 @@ def play_game(SampleGame, Setting):
         GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
         MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Setting)
         if GameOver:
-          DisplayWinner(WhoseTurn)
+          DisplayWinner(WhoseTurn, Moves)
           PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
         if WhoseTurn == "W":
           WhoseTurn = "B"
         else:
           WhoseTurn = "W"
+          Moves = Moves + 1
+    Scores = GetScores(Scores, WhoseTurn, Moves)
+    if PlayAgain == "Y":
       print()
       if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
         PlayAgain = chr(ord(PlayAgain) - 32)
-
+  return Scores
 if __name__ == "__main__":
   #pdb.set_trace()
+  Scores = []
   Setting = False
   Quit = False
   while not Quit:
     display_menu()
     solection = get_menu_solection()
-    Quit, Setting = make_solection(solection, Quit, Setting)
+    Quit, Setting, Scores = make_solection(solection, Quit, Setting, Scores)
 
