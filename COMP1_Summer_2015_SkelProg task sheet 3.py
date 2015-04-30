@@ -7,6 +7,7 @@
 
 import pdb
 from datetime import*
+import pickle
 BOARDDIMENSION = 8
 yes_list = ["y", "Y", "yes", "Yes"]
 no_list = ["n", "N", "no", "No"]
@@ -316,39 +317,35 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
                 MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
-#def load_game():
-# pdb.set_trace()
-#  try:
-#    with open("saved_game.dat", mode="rb") as SavedGame:
-#      Board = SavedGame
-#      return Board
-#  except FileNotFoundError:
-#    print()
-#   print("There is no saved game")
-#    print()
+def load_high_scores():
+  #pdb.set_trace()
+  try:
+    with open("saved_scores.dat", mode="rb") as SavedScores:
+      Scores = pickle.load(SavedScores)
+  except FileNotFoundError:
+    Scores = []
+  return Scores
+
+def load_game():
+  #pdb.set_trace()
+  try:
+    with open("saved_game.dat", mode="rb") as SavedGame:
+      board_state = pickal.load(SavedGame)
+    return board_state
+  except FileNotFoundError:
+    print()
+    print("There is no saved game")
+    print()
 
 def save_high_scores(Scores):
   #pdb.set_trace()
   with open("saved_scores.dat", mode="wb") as SavedScores:
-    for score in Scores:
-      score_date = score.Date
-      score_date_string = datetime.strftime(score_date, "%d/%m/%Y")
-      SavedGame.write(score.Name)
-      SavedGame.write("/n")
-      SavedGame.write(score.Colour)
-      SavedGame.write("/n")
-      SavedGame.write(score.Score)
-      SavedGame.write("/n")
-      SavedGame.write(score_date_string)
-      SavedGame.write("/n")
-
-#def save_game(Board):
-# pdb.set_trace()
-#  with open("saved_game.dat", mode="wb") as SavedGame:
-#    for line in Board:
-#      for count in line:
-#        SavedGame.write(count)
-#      SavedGame.write("/n")
+    pickle.dump(Scores, SavedScores)
+    
+def save_game(board_state):
+  #pdb.set_trace()
+  with open("saved_game.dat", mode="wb") as SavedGame:
+    pickle.dump(board_state, SavedGame)
 
 def display_high_scores(Scores):
   #pdb.set_trace()
@@ -472,16 +469,17 @@ def InitialiseNewBoard(Board):
       else:
         Board[RankNo][FileNo] = "  "
 
-def GetSquare(message, Board, WhoseTurn, Quit):
+def GetSquare(message, Board, WhoseTurn, Quit, setting, Moves, Sample):
   #pdb.set_trace()
   Check = False
   while not Check:
     try:
       Square = int(input(message))
       if Square == -1:
-        display_in_game_menu()
-        solection = get_menu_solection()
-        Quit = make_in_game_solection(solection, Board, WhoseTurn)
+        while not Quit or Selection != 3:
+          display_in_game_menu()
+          selection = get_menu_selection()
+          Quit = make_in_game_selection(selection, Board, WhoseTurn, setting, Moves, Sample)
         if Quit:
           Check = True
       elif Square < 10:
@@ -529,38 +527,38 @@ def GetScores(Scores, WhoseTurn, Moves):
     Scores.append(score)
   return Scores
 
-def GetMove(Board, WhoseTurn):
+def GetMove(Board, WhoseTurn, setting, Moves, Sample):
   #pdb.set_trace()
   StartSquareMessage = "Enter coordinates of square containing piece to move (file first) or type '-1' for menu: "
   FinishSquareMessage = "Enter coordinates of square to move piece to (file first): "
   Quit = False
-  StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit)
+  StartFile, StartRank, Quit = GetSquare(StartSquareMessage, Board, WhoseTurn, Quit, setting, Moves, Sample)
   if not Quit:
-    FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit)
+    FinishFile, FinishRank, Quit  = GetSquare(FinishSquareMessage, Board, WhoseTurn, Quit, setting, Moves, Sample)
   else:
     FinishFile = ""
     FinishRank = ""
   return StartFile, StartRank, FinishFile, FinishRank, Quit
 
-def get_menu_solection():
+def get_menu_selection():
   #pdb.set_trace()
   try:
-    solection = int(input("Please select an option: "))
+    selection = int(input("Please select an option: "))
   except ValueError:
     print("Please enter a number.")
-    solection = get_menu_solection()
-  return solection
+    selection = get_menu_selection()
+  return selection
 
-def make_in_game_solection(solection, Borad, WhoseTurn):
+def make_in_game_selection(selection, Board, WhoseTurn, Setting, Moves, Sample):
   #pdb.set_trace()
-  if solection == 1:
-    save_game(Borad)
-    Quit = make_in_game_solection(solection, Borad)
-  elif solection == 2:
+  if selection == 1:
+    board_state = [Sample, Setting, Board, WhoseTurn, Moves]
+    save_game(board_state)
+  elif selection == 2:
     Quit = True
-  elif solection == 3:
+  elif selection == 3:
     Quit = False
-  elif solection == 4:
+  elif selection == 4:
     print()
     print("Surrendering...")
     print()
@@ -572,23 +570,34 @@ def make_in_game_solection(solection, Borad, WhoseTurn):
     Quit = True
   else:
     print("please make a valid solection")
-    solection = get_menu_solection()
-    Quit = make_in_game_solection(solection, Borad, WhoseTurn)
+    selection = get_menu_selection()
+    Quit = make_in_game_selection(solection, Board, WhoseTurn)
   return Quit
 
-def make_solection(solection, Quit, Setting, Scores):
+def unpack_board_state(board_state):
+  Sample =  board_state[0]
+  Setting = board_state[1]
+  Board = board_state[2]
+  WhoseTurn = board_state[3]
+  Moves = board_state[4]
+  return Sample, Setting, Board, WhoseTurn, Moves
+  
+
+def make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves):
   #pdb.set_trace()
-  if solection == 1:
-    play_game("N", Setting, Scores)
-  elif solection == 2:
-    load_game()
-  elif solection == 3:
-    play_game("Y", Setting, Scores)
-  elif solection == 4:
+  if selection == 1:
+    play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
+  elif selection == 2:
+    board_state = load_game()
+    Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
+    play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+  elif selection == 3:
+    play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
+  elif selection == 4:
     display_high_scores(Scores)
-  elif solection == 5:
+  elif selection == 5:
     Setting = Settings(Setting)
-  elif solection == 6:
+  elif selection == 6:
     Quit = True
   else:
     print("please make a valid solection")
@@ -651,25 +660,26 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Set
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
 
-def play_game(SampleGame, Setting, Scores):
+def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves):
   #pdb.set_trace()
-  Board = CreateBoard() #0th index not used
+  if Board == []:
+    Temp = Board
+    Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
   PlayAgain = "Y"
   while PlayAgain == "Y":
-    Moves = 1
-    WhoseTurn = "W"
     GameOver = False
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
-    InitialiseBoard(Board, SampleGame)
+    if Temp == []:
+      InitialiseBoard(Board, SampleGame)
     while not(GameOver):
       DisplayBoard(Board)
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
-        StartFile, StartRank, FinishFile, FinishRank, Quit = GetMove(Board, WhoseTurn)
+        StartFile, StartRank, FinishFile, FinishRank, Quit = GetMove(Board, WhoseTurn, Setting, Moves, SampleGame)
         if (Quit):
           MoveIsLegal = True
         elif not (Quit):
@@ -696,7 +706,7 @@ def play_game(SampleGame, Setting, Scores):
         if GameOver:
           DisplayWinner(WhoseTurn, Moves)
           PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-        if WhoseTurn == "W":
+        elif WhoseTurn == "W":
           WhoseTurn = "B"
         else:
           WhoseTurn = "W"
@@ -709,11 +719,14 @@ def play_game(SampleGame, Setting, Scores):
   return Scores
 if __name__ == "__main__":
   #pdb.set_trace()
-  Scores = []
   Setting = False
   Quit = False
+  Moves = 1
+  Board = []
+  WhoseTurn = "W"
+  Scores = load_high_scores()
   while not Quit:
     display_menu()
-    solection = get_menu_solection()
-    Quit, Setting, Scores = make_solection(solection, Quit, Setting, Scores)
-
+    selection = get_menu_selection()
+    Quit, Setting, Scores = make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves)
+  save_high_scores(Scores)
