@@ -330,12 +330,10 @@ def load_game():
   #pdb.set_trace()
   try:
     with open("saved_game.dat", mode="rb") as SavedGame:
-      board_state = pickal.load(SavedGame)
-    return board_state
+      board_state = pickle.load(SavedGame)
   except FileNotFoundError:
-    print()
-    print("There is no saved game")
-    print()
+    board_state = []
+  return board_state
 
 def save_high_scores(Scores):
   #pdb.set_trace()
@@ -347,8 +345,25 @@ def save_game(board_state):
   with open("saved_game.dat", mode="wb") as SavedGame:
     pickle.dump(board_state, SavedGame)
 
+def sort_high_scores(Scores):
+  #pdb.set_trace()
+  swaps = False
+  while not swaps:
+      swaps = True
+      count = 0
+      for Score in Scores:
+          if count < number - 1:
+              if Score > Scores[count+1]:
+                  swaps = False
+                  temp = Score
+                  Scores[count] = Scores[count+1]
+                  Scores[count+1] = temp
+              count = count + 1
+  return Scores
+
 def display_high_scores(Scores):
   #pdb.set_trace()
+  Scores = sort_high_scores(Scores)
   print()
   print("High Scores")
   print()
@@ -554,6 +569,10 @@ def make_in_game_selection(selection, Board, WhoseTurn, Setting, Moves, Sample):
   if selection == 1:
     board_state = [Sample, Setting, Board, WhoseTurn, Moves]
     save_game(board_state)
+    print()
+    print("Game saved ...")
+    print()
+    Quit = False
   elif selection == 2:
     Quit = True
   elif selection == 3:
@@ -586,13 +605,48 @@ def unpack_board_state(board_state):
 def make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves):
   #pdb.set_trace()
   if selection == 1:
-    play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
+    board_state = load_game()
+    if board != []:
+      print()
+      print("A previous game was found ... ")
+      game = ""
+      while game in yes_list or game in no_list:
+        game = input("Do you wish to continue with previous game (Y or N): ")
+        if game in yes_list:
+          Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
+          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+        elif game in no_list:
+          play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
+        else:
+          print("This is not a valid solection please try again")
+    else:
+      play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
   elif selection == 2:
     board_state = load_game()
-    Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
-    play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+    if board != []:
+      Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
+      play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+    else:
+      print()
+      print("There is no saved game")
+      print()
   elif selection == 3:
-    play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
+    board_state = load_game()
+    if board != []:
+      print()
+      print("A previous game was found ... ")
+      game = ""
+      while game in yes_list or game in no_list:
+        game = input("Do you wish to continue with previous game (Y or N): ")
+        if game in yes_list:
+          Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
+          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+        elif game in no_list:
+          play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
+        else:
+          print("This is not a valid solection please try again")
+    else:
+      play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
   elif selection == 4:
     display_high_scores(Scores)
   elif selection == 5:
