@@ -8,7 +8,7 @@
 import pdb
 from datetime import*
 import pickle
-BOARDDIMENSION = 8
+#BOARDDIMENSION = 8
 yes_list = ["y", "Y", "yes", "Yes"]
 no_list = ["n", "N", "no", "No"]
 
@@ -19,12 +19,12 @@ class ScoreRecord:
     self.Score = None
     self.Date = datetime.now()
 
-def CreateBoard():
+def CreateBoard(board):
   #pdb.set_trace()
   Board = []
-  for Count in range(BOARDDIMENSION + 1):
+  for Count in range(board + 1):
     Board.append([])
-    for Count2 in range(BOARDDIMENSION + 1):
+    for Count2 in range(board + 1):
       Board[Count].append("  ")
   return Board
 
@@ -86,28 +86,28 @@ def display_in_game_menu():
   print("4. Surender")
   print()
 
-def DisplayBoard(Board):
+def DisplayBoard(Board, board):
   #pdb.set_trace()
   print()
-  for RankNo in range(1, BOARDDIMENSION + 1):
+  for RankNo in range(1, board + 1):
     print("     -------------------------")
     print("R{0}".format(RankNo), end="   ")
-    for FileNo in range(1, BOARDDIMENSION + 1):
+    for FileNo in range(1, board + 1):
       print("|" + Board[RankNo][FileNo], end="")
     print("|")
   print("     -------------------------")
   print()
   print("      ", end="")
-  for FileNo in range(1, BOARDDIMENSION + 1):
+  for FileNo in range(1, board + 1):
     print("F{0} ".format(FileNo), end="")
   print()
   print()
 
-def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece):
+def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, board):
   #pdb.set_trace()
   CheckRedumMoveIsLegal = False
   if ColourOfPiece == "W":
-    if StartRank == BOARDDIMENSION - 1:
+    if StartRank == board - 1:
       if FinishRank == StartRank - 2:
         if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
           CheckRedumMoveIsLegal = True
@@ -186,7 +186,7 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
-  pdb.set_trace()
+  #pdb.set_trace()
   CheckNabuMoveIsLegal = True
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     Rank = StartRank
@@ -265,16 +265,16 @@ def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
     CheckEtluMoveIsLegal = True
   return CheckEtluMoveIsLegal
 
-def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
+def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, board):
   #pdb.set_trace()
   MoveIsLegal = True
   if FinishRank == 0:
     MoveIsLegal = False
-  elif FinishRank == BOARDDIMENSION + 1:
+  elif FinishRank == board + 1:
     MoveIsLegal = False
   elif FinishFile == 0:
     MoveIsLegal = False
-  elif FinishFile == BOARDDIMENSION + 1:
+  elif FinishFile == board + 1:
     MoveIsLegal = False
   if MoveIsLegal == True:
     if (FinishFile == StartFile) and (FinishRank == StartRank):
@@ -384,6 +384,7 @@ def DisplaySettings():
   #pdb.set_trace()
   print()
   print("1. Use Kashshaptu Piece")
+  print("2. Use 9x9 Board")
   print("9.Return to Main Menu")
   print()
 
@@ -396,7 +397,7 @@ def GetSettingChange():
     Selection = GetSettingChange()
   return Selection
 
-def MakeSettingChange(Selection, Setting, Quit):
+def MakeSettingChange(Selection, Setting, Quit, board):
   #pdb.set_trace()
   if Selection == 1:
     Correct = False
@@ -410,18 +411,30 @@ def MakeSettingChange(Selection, Setting, Quit):
         Correct = True
       else:
         print("Plese enter yes or no!")
+  elif Selection == 2:
+    Correct = False
+    while not Correct:
+      Confomation = input("Do you wish to use a 9x9 board (Y/N)?: ")
+      if Confomation in yes_list:
+        board = 9
+        Correct = True
+      elif Confomation in no_list:
+        board = 8
+        Correct = True
+      else:
+        print("Plese enter yes or no!")
   elif Selection == 9:
     Quit = True
-  return Setting, Quit
+  return Setting, Quit, board
 
-def Settings(Setting):
+def Settings(Setting, board):
   #pdb.set_trace()
   Quit = False
   while not Quit:
     DisplaySettings()
     Selection = GetSettingChange()
-    Setting, Quit = MakeSettingChange(Selection, Setting, Quit)
-  return Setting
+    Setting, Quit, board = MakeSettingChange(Selection, Setting, Quit, board)
+  return Setting, board
 
 def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   #pdb.set_trace()
@@ -431,17 +444,17 @@ def ConfirmMove(StartRank, StartFile, FinishRank, FinishFile):
   print()
   return confirm_move
 
-def InitialiseBoard(Board, SampleGame):
+def InitialiseBoard(Board, SampleGame, board):
   #pdb.set_trace()
   if SampleGame == "Y":
-    InitialiseSampleBoard(Board)
+    InitialiseSampleBoard(Board, board)
   else:
-    InitialiseNewBoard(Board)
+    InitialiseNewBoard(Board, board)
 
-def InitialiseSampleBoard(Board):
+def InitialiseSampleBoard(Board, board):
   #pdb.set_trace()
-  for RankNo in range(1, BOARDDIMENSION + 1):
-    for FileNo in range(1, BOARDDIMENSION + 1):
+  for RankNo in range(1, board + 1):
+    for FileNo in range(1, board + 1):
       Board[RankNo][FileNo] = "  "
   Board[1][2] = "BG"
   Board[1][4] = "BS"
@@ -452,35 +465,38 @@ def InitialiseSampleBoard(Board):
   Board[3][8] = "BE"
   Board[6][8] = "BR"
 
-def InitialiseNewBoard(Board):
+def InitialiseNewBoard(Board, board):
   #pdb.set_trace()
-  for RankNo in range(1, BOARDDIMENSION + 1):
-    for FileNo in range(1, BOARDDIMENSION + 1):
+  for RankNo in range(1, board + 1):
+    for FileNo in range(1, board + 1):
       if RankNo == 2:
         Board[RankNo][FileNo] = "BR"
-      elif RankNo == 7:
+      elif RankNo == board - 1:
         Board[RankNo][FileNo] = "WR"
-      elif RankNo == 1 or RankNo == 8:
+      elif RankNo == 1 or RankNo == board:
         if RankNo == 1:
           Board[RankNo][FileNo] = "B"
         elif RankNo == 8:
           Board[RankNo][FileNo] = "W"
-        if FileNo == 1 or FileNo == 8:
+        if FileNo == 1 or FileNo == board:
           Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
-        elif FileNo == 2 or FileNo == 7:
+        elif FileNo == 2 or FileNo == board - 1:
           Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
-        elif FileNo == 3 or FileNo == 6:
+        elif FileNo == 3 or FileNo == board - 2:
           Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
         if Board[RankNo][FileNo] == "W":
           if FileNo == 4:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
-          elif FileNo == 5:
+          elif FileNo == board - 3:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
         elif Board[RankNo][FileNo] == "B":
           if FileNo == 4:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
-          elif FileNo == 5:
+          elif FileNo == board - 3:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+        if board == 9:
+          if FileNo == 5:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "K"
       else:
         Board[RankNo][FileNo] = "  "
 
@@ -499,8 +515,6 @@ def GetSquare(message, Board, WhoseTurn, Quit, setting, Moves, Sample):
           Check = True
       elif Square < 10:
         print("Please provide both FILE and RANK for this move")
-        Square = GetSquare(message, Board, WhoseTurn, Quit)
-        Square = GetSquare(message, Board, WhoseTurn, Quit)
       else:
         Check = True
     except ValueError:
@@ -564,10 +578,10 @@ def get_menu_selection():
     selection = get_menu_selection()
   return selection
 
-def make_in_game_selection(selection, Board, WhoseTurn, Setting, Moves, Sample):
+def make_in_game_selection(selection, Board, WhoseTurn, Setting, Moves, Sample, board):
   #pdb.set_trace()
   if selection == 1:
-    board_state = [Sample, Setting, Board, WhoseTurn, Moves]
+    board_state = [Sample, Setting, Board, WhoseTurn, Moves, board]
     save_game(board_state)
     print()
     print("Game saved ...")
@@ -599,33 +613,34 @@ def unpack_board_state(board_state):
   Board = board_state[2]
   WhoseTurn = board_state[3]
   Moves = board_state[4]
-  return Sample, Setting, Board, WhoseTurn, Moves
+  board = board_state[5]
+  return Sample, Setting, Board, WhoseTurn, Moves, board
   
 
-def make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves):
+def make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves, board):
   #pdb.set_trace()
   if selection == 1:
     board_state = load_game()
-    if board != []:
+    if board_state != []:
       print()
       print("A previous game was found ... ")
       game = ""
-      while game in yes_list or game in no_list:
+      while game not in yes_list and game not in no_list:
         game = input("Do you wish to continue with previous game (Y or N): ")
         if game in yes_list:
-          Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
-          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+          Sample, Setting, Board, WhoseTurn, Moves, board = unpack_board_state(board_state)
+          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves, board)
         elif game in no_list:
-          play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
+          play_game("N", Setting, Scores, Board, WhoseTurn, Moves, board)
         else:
           print("This is not a valid solection please try again")
     else:
-      play_game("N", Setting, Scores, Board, WhoseTurn, Moves)
+      play_game("N", Setting, Scores, Board, WhoseTurn, Moves, board)
   elif selection == 2:
     board_state = load_game()
-    if board != []:
-      Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
-      play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+    if board_state != []:
+      Sample, Setting, Board, WhoseTurn, Moves, board = unpack_board_state(board_state)
+      play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves, board)
     else:
       print()
       print("There is no saved game")
@@ -639,23 +654,23 @@ def make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves):
       while game in yes_list or game in no_list:
         game = input("Do you wish to continue with previous game (Y or N): ")
         if game in yes_list:
-          Sample, Setting, Board, WhoseTurn, Moves = unpack_board_state(board_state)
-          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves)
+          Sample, Setting, Board, WhoseTurn, Moves, board = unpack_board_state(board_state)
+          play_game(Sample, Setting, Scores, Board, WhoseTurn, Moves, board)
         elif game in no_list:
-          play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
+          play_game("Y", Setting, Scores, Board, WhoseTurn, Moves, board)
         else:
           print("This is not a valid solection please try again")
     else:
-      play_game("Y", Setting, Scores, Board, WhoseTurn, Moves)
+      play_game("Y", Setting, Scores, Board, WhoseTurn, Moves, board)
   elif selection == 4:
     display_high_scores(Scores)
   elif selection == 5:
-    Setting = Settings(Setting)
+    Setting = Settings(Setting, board)
   elif selection == 6:
     Quit = True
   else:
     print("please make a valid solection")
-  return Quit, Setting, Scores
+  return Quit, Setting, Scores, board
 
 def GetPieceName(FinishRank, FinishFile, Board):
   #pdb.set_trace()
@@ -674,7 +689,7 @@ def GetPieceName(FinishRank, FinishFile, Board):
     PiecesType = "Marzaz pani"
   return PiecesType
 
-def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Setting):
+def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Setting, board):
   #pdb.set_trace()
   PiecesType1 = GetPieceName(FinishRank, FinishFile, Board)
   if Board[FinishRank][FinishFile] != "  ":
@@ -699,7 +714,7 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Set
       print()
       Board[FinishRank][FinishFile] = "WK"
       Board[StartRank][StartFile] = "  "
-  elif WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
+  elif WhoseTurn == "B" and FinishRank == board and Board[StartRank][StartFile][1] == "R":
     if not Setting:
       print("Black Redum promoted to Marzaz Pani.")
       print()
@@ -714,11 +729,11 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, Set
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
 
-def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves):
+def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves, board):
   #pdb.set_trace()
   if Board == []:
     Temp = Board
-    Board = CreateBoard() #0th index not used
+    Board = CreateBoard(board) #0th index not used
   StartSquare = 0 
   FinishSquare = 0
   PlayAgain = "Y"
@@ -727,9 +742,9 @@ def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves):
     if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
       SampleGame = chr(ord(SampleGame) - 32)
     if Temp == []:
-      InitialiseBoard(Board, SampleGame)
+      InitialiseBoard(Board, SampleGame, board)
     while not(GameOver):
-      DisplayBoard(Board)
+      DisplayBoard(Board, board)
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
@@ -737,7 +752,7 @@ def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves):
         if (Quit):
           MoveIsLegal = True
         elif not (Quit):
-          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, board)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
           else:
@@ -771,9 +786,11 @@ def play_game(SampleGame, Setting, Scores, Board, WhoseTurn, Moves):
       if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
         PlayAgain = chr(ord(PlayAgain) - 32)
   return Scores
+
 if __name__ == "__main__":
-  #pdb.set_trace()
+  pdb.set_trace()
   Setting = False
+  board = 8
   Quit = False
   Moves = 1
   Board = []
@@ -782,5 +799,5 @@ if __name__ == "__main__":
   while not Quit:
     display_menu()
     selection = get_menu_selection()
-    Quit, Setting, Scores = make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves)
+    Quit, Setting, Scores, board = make_selection(selection, Quit, Setting, Scores, Board, WhoseTurn, Moves, board)
   save_high_scores(Scores)
