@@ -1,0 +1,25 @@
+#Nicola Batty
+#01/05/2015
+#Section B of past Paper
+
+import pdb
+
+#pdb.set_trace()
+Isbn = []
+for count in range(1,14):
+    number = int(input("Please enter next digit of ISBN: "))
+    Isbn.append(number)
+CalculatedDigit = 0
+Count = 0
+while Count < 13:
+    CalculaedDigit = CalculatedDigit + Isbn[Count]
+    Count = Count + 1
+while CalculatedDigit>=10:
+    CalculatedDigit = CalculatedDigit - 10
+CalculatedDigit = 10 - CalculatedDigit
+if CalculatedDigit == 10:
+    CalculatedDigit = 0
+if CalculatedDigit == Isbn[12]:
+    print("Valid ISBN")
+else:
+    print("Invalid ISBN")
